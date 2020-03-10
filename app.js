@@ -1,4 +1,4 @@
-import init from "./lib/init.js";
+import init from './lib/init.js'
 
 // Initialize the application.
-Stage(init);
+Stage(init)
