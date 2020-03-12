@@ -11,3 +11,10 @@ Stage({
     bullet: { x: 0, y: 0, width: 15, height: 30 },
   },
 })
+
+Stage({
+  image: '/static/asteroid-brown.png',
+  textures: {
+    rock: { x: 0, y: 0, width: 64, height: 64 }
+  }
+})
