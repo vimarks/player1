@@ -1,0 +1,28 @@
+{
+  "name": "player1",
+  "version": "0.0.0",
+  "description": "Spaceship Laboratory",
+  "private": true,
+  "dependencies": {},
+  "devDependencies": {
+    "stage-js": "^0.8.11",
+    "webpack": "^4.42.0",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.10.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "start": "webpack-dev-server --open --content-base dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vimarks/player1.git"
+  },
+  "author": "Logitank Labs",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vimarks/player1/issues"
+  },
+  "homepage": "https://github.com/vimarks/player1#readme"
+}

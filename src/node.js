@@ -1,3 +1,4 @@
+import Stage from 'stage-js/platform/web'
 import * as Trig from './trig.js'
 
 /**
