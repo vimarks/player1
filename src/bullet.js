@@ -26,23 +26,15 @@ export class Bullet extends Moving {
     }
   }
 
-  onLeaveLeft() {
-    // Wrap the bullet from left to right
-    this.moveTo(-this.offsetX, this.offsetY)
-  }
-
-  onLeaveRight() {
-    // Wrap the bullet from right to left
-    this.moveTo(-this.offsetX, this.offsetY)
-  }
-
-  onLeaveTop() {
-    // Wrap the bullet from top to bottom
-    this.moveTo(this.offsetX, -this.offsetY)
-  }
-
-  onLeaveBottom() {
-    // Wrap the bullet from bottom to top
-    this.moveTo(this.offsetX, -this.offsetY)
+  /**
+   * When the shuttle leaves the screen, wrap it around vertically or
+   * horizontally.
+   */
+  onLeave(side) {
+    if (side === 'top' || side === 'bottom') {
+      this.moveTo(this.offsetX, -this.offsetY)
+    } else if (side === 'left' || side === 'right') {
+      this.moveTo(-this.offsetX, this.offsetY)
+    }
   }
 }
