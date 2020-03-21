@@ -6,28 +6,33 @@ import * as Trig from './trig.js'
  * Base class extending Node with the ability to move around the screen.
  */
 export class Moving extends Node {
-  constructor(imageName, offsetX, offsetY, rotation, velocityX, velocityY) {
+  constructor(
+    imageName,
+    offsetX,
+    offsetY,
+    rotation,
+    velocityX = 0,
+    velocityY = 0,
+    spin = 0
+  ) {
     super(imageName, offsetX, offsetY, rotation)
     this.velocityX = velocityX
     this.velocityY = velocityY
+    this.spin = spin
   }
 
   /**
    * Gets the X-coordinate where the node disappears off the screen.
    */
   getRightEdge(stage) {
-    let nodeWidth = this.node.pin('width')
-    let stageWidth = stage.pin('width')
-    return (nodeWidth + stageWidth) / 2
+    return (this.node.width() + stage.width()) / 2
   }
 
   /**
    * Gets the Y-coordinate where the node disappears off the screen.
    */
   getBottomEdge(stage) {
-    let nodeHeight = this.node.pin('height')
-    let stageHeight = stage.pin('height')
-    return (nodeHeight + stageHeight) / 2
+    return (this.node.height() + stage.height()) / 2
   }
 
   /**
@@ -37,7 +42,9 @@ export class Moving extends Node {
     let adjustedDt = dt * constants.dtCoefficient
     let relOffsetX = xAmount ? xAmount * adjustedDt : 0
     let relOffsetY = yAmount ? yAmount * adjustedDt : 0
-    this.moveTo(this.offsetX + relOffsetX, this.offsetY + relOffsetY)
+    if (relOffsetX !== 0 || relOffsetY !== 0) {
+      this.moveTo(this.offsetX + relOffsetX, this.offsetY + relOffsetY)
+    }
   }
 
   /**
@@ -46,7 +53,9 @@ export class Moving extends Node {
   rotateBy(amount, dt) {
     let adjustedDt = dt * constants.dtCoefficient
     let relRotation = amount ? amount * adjustedDt : 0
-    this.rotateTo(this.rotation + relRotation)
+    if (relRotation !== 0) {
+      this.rotateTo(this.rotation + relRotation)
+    }
   }
 
   /**
@@ -76,6 +85,9 @@ export class Moving extends Node {
   tick(dt, stage) {
     super.tick(dt, stage)
 
+    // Spin the node based on its angular momentum
+    this.rotateBy(this.spin, dt)
+
     // Move the node based on its current velocity on every tick
     this.moveBy(this.velocityX, this.velocityY, dt)
 
@@ -83,30 +95,22 @@ export class Moving extends Node {
     let rightEdge = this.getRightEdge(stage)
     let bottomEdge = this.getBottomEdge(stage)
     if (this.offsetX >= rightEdge) {
-      this.onLeaveRight()
+      this.onLeave('right')
     } else if (this.offsetX <= -rightEdge) {
-      this.onLeaveLeft()
+      this.onLeave('left')
     }
     if (this.offsetY >= bottomEdge) {
-      this.onLeaveBottom()
+      this.onLeave('bottom')
     } else if (this.offsetY <= -bottomEdge) {
-      this.onLeaveTop()
+      this.onLeave('top')
     }
   }
 
-  onLeaveLeft() {
-    // Override if needed
-  }
-
-  onLeaveRight() {
-    // Override if needed
-  }
-
-  onLeaveTop() {
-    // Override if needed
-  }
-
-  onLeaveBottom() {
+  /**
+   * Called when the node has moved completely off-screen, with the side of the
+   * screen where the node left ('top', 'bottom', 'left', 'right').
+   */
+  onLeave(side) {
     // Override if needed
   }
 }

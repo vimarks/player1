@@ -28,8 +28,14 @@ export let constants = {
   // Determines maximum size of new rocks.
   rockMaxScale: 3,
 
-  // The constant height of the viewbox, scaled to the size of the window.
-  viewboxHeight: 1200,
+  // The base speed of rock spinning.
+  rockSpinSpeed: 1,
+
+  // The viewbox resolution, defaults to super retina.
+  viewbox: {
+    width: 2436,
+    height: 1125,
+  },
 
   // Defines the map of bound keyboard actions.
   keyBindings: {

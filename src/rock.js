@@ -2,10 +2,9 @@ import { constants } from './constants.js'
 import { Moving } from './moving.js'
 
 export class RockMaker {
-  constructor(state) {
+  constructor() {
     this.numRocksStart = 10
     this.rocksPct = 0.6
-    this.state = state
     this.rockSet = new Set()
   }
 
@@ -15,7 +14,7 @@ export class RockMaker {
 
   maybeMakeRocks(stage) {
     if (Math.random() < constants.newRockChance) {
-      let rock = new Rock(this.state, stage, this.rockSet)
+      let rock = new Rock(stage, this.rockSet)
       // rockSet keeps track of all rocks on-screen
       // add rock to rockSet
       this.rockSet.add(rock)
@@ -26,20 +25,22 @@ export class RockMaker {
 }
 
 class Rock extends Moving {
-  constructor(state, stage, rockSet) {
+  constructor(stage, rockSet) {
     // Helper to randomly choose number in range [-n, n).
     let randRange = n => Math.random() * 2 * n - n
 
     let velocityX = randRange(constants.rockMaxVelocity)
     let velocityY = randRange(constants.rockMaxVelocity)
 
-    let offsetX = stage.pin('width') / 2
-    let offsetY = randRange(stage.pin('height') / 2)
+    let offsetX = stage.width() / 2
+    let offsetY = randRange(stage.height() / 2)
     // Make sure rock begins on side it's moving away from.
     if (velocityX > 0) offsetX = -offsetX
 
     let rotation = Math.random() * 2 * Math.PI
-    super('rock', offsetX, offsetY, rotation, velocityX, velocityY)
+    let maxSpin = constants.rockSpinSpeed
+    let spin = Math.random() * 2 * maxSpin - maxSpin
+    super('rock', offsetX, offsetY, rotation, velocityX, velocityY, spin)
     this.rockSet = rockSet
 
     let scale = Math.random() * constants.rockMaxScale
@@ -52,19 +53,7 @@ class Rock extends Moving {
     this.rockSet.delete(this)
   }
 
-  onLeaveLeft() {
-    this.remove()
-  }
-
-  onLeaveRight() {
-    this.remove()
-  }
-
-  onLeaveTop() {
-    this.remove()
-  }
-
-  onLeaveBottom() {
+  onLeave() {
     this.remove()
   }
 }

@@ -6,12 +6,11 @@ import * as Trig from './trig.js'
  * is rendered at a location with a direction.
  */
 export class Node {
-  constructor(imageName, offsetX, offsetY, rotation) {
+  constructor(imageName, offsetX = 0, offsetY = 0, rotation = 0) {
     this.node = Stage.image(imageName)
     this.offsetX = offsetX
     this.offsetY = offsetY
     this.rotation = rotation
-    this.radius = (this.node.pin('width') * this.node.pin('scaleX')) / 2
   }
 
   start(stage) {
@@ -34,15 +33,29 @@ export class Node {
     // Override if needed
   }
 
-  // if shuttle and rock touch, trigger explosion
-  collisionDetection(shuttle, rock) {
-    let d = Trig.calculateDistance(shuttle.offsetX, shuttle.offsetY, rock.offsetX, rock.offsetY)
-    if (d <= shuttle.radius + rock.radius)
-      // call explodeShuttle function here
-      console.log('explode!@#')
-    return true
+  /**
+   * Simulate a radius property based on the width and scale of the node.
+   */
+  get radius() {
+    return (this.node.width() * this.node.pin('scaleX')) / 2
   }
 
+  /**
+   * Detect collision between this node and another.
+   */
+  collisionDetection(other) {
+    let d = Trig.calculateDistance(
+      this.offsetX,
+      this.offsetY,
+      other.offsetX,
+      other.offsetY
+    )
+    return d <= this.radius + other.radius
+  }
+
+  /**
+   * Remove the node from the screen and perform any additional cleanup.
+   */
   remove() {
     this.node.remove()
   }

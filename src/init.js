@@ -15,11 +15,10 @@ export default function(stage) {
   shuttle.start(stage)
   rockMaker.start(stage)
 
-  // If the window is resized, update the viewbox
-  stage.on('viewport', viewport => {
-    let aspectRatio = viewport.width / viewport.height
-    let width = aspectRatio * constants.viewboxHeight
-    let height = constants.viewboxHeight
-    stage.viewbox(width, height, 'in-pad')
-  })
+  // Set the viewbox
+  stage.viewbox(
+    constants.viewbox.width,
+    constants.viewbox.height,
+    constants.viewbox.mode || 'in'
+  )
 }

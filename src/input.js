@@ -54,7 +54,9 @@ export class Input {
 
     // A touch or a mouse click end event
     stage.on(['mouseup', 'mousecancel'], point => this.onMouseEnd(stage, point))
-    stage.on(['touchend', 'touchcancel'], point => this.onTouchEnd(stage, point))
+    stage.on(['touchend', 'touchcancel'], point =>
+      this.onTouchEnd(stage, point)
+    )
   }
 
   /**
@@ -128,10 +130,8 @@ export class Input {
    * When the mouse moves, set its action value to the mouse location.
    */
   onMouseMove(stage, point) {
-    let screenWidth = stage.pin('width')
-    let screenHeight = stage.pin('height')
-    let mouseX = point.x - screenWidth / 2
-    let mouseY = point.y - screenHeight / 2
+    let mouseX = point.x - stage.width() / 2
+    let mouseY = point.y - stage.height() / 2
     let mousePoint = new MousePoint(mouseX, mouseY)
 
     this.setAction(stage, this.mouseBindings.move, mousePoint)
@@ -240,7 +240,7 @@ class Active {
   }
 
   equals(prev) {
-    return this === prev
+    return prev instanceof Active
   }
 }
 
