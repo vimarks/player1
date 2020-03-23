@@ -1,3 +1,4 @@
+import Stage from 'stage-js/platform/web'
 import { constants } from './constants.js'
 import { Actions } from './actions.js'
 import { Bullet } from './bullet.js'
@@ -7,7 +8,9 @@ import * as Trig from './trig.js'
 export class Shuttle extends Moving {
   constructor(rockMaker, source) {
     // Initialize with the 'shuttle' image at the center of the screen
-    super('shuttle')
+    let node = Stage.image('shuttle')
+    super(node)
+
     this.reloading = false
     this.rockMaker = rockMaker
     this.actions = new Actions(this.node, source, [
@@ -59,7 +62,9 @@ export class Shuttle extends Moving {
     let rockSet = this.rockMaker.rockSet
     for (let n of rockSet) {
       if (this.collisionDetection(n)) {
-        console.log('explode!@#')
+        this.node.remove()
+        let explosion = new Explode(this.offsetX, this.offsetY)
+        explosion.start(stage)
       }
     }
   }
@@ -111,5 +116,17 @@ export class Shuttle extends Moving {
     } else if (side === 'left' || side === 'right') {
       this.moveTo(-this.offsetX, this.offsetY)
     }
+  }
+}
+
+export class Explode extends Moving {
+  constructor(offsetX, offsetY) {
+    let node = Stage.anim('explosion')
+    super(node, offsetX, offsetY)
+  }
+  start(stage) {
+    super.start(stage)
+    this.node.play()
+    console.log('start')
   }
 }

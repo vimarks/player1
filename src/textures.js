@@ -19,6 +19,28 @@ const textures = [
       rock: { x: 0, y: 0, width: 64, height: 64 },
     },
   },
+
+  {
+    image: {
+      src: 'static/explosionSpriteSheet.png',
+    },
+    textures: {
+      explosion: [
+        { x: 0, y: 0, width: 52, height: 52 },
+        { x: 0, y: 0, width: 52, height: 52 },
+        { x: 0, y: 0, width: 52, height: 52 },
+        { x: 0, y: 0, width: 52, height: 52 },
+        { x: 0, y: 0, width: 52, height: 52 },
+        { x: 0, y: 0, width: 52, height: 52 },
+        { x: 0, y: 0, width: 52, height: 52 },
+        { x: 0, y: 0, width: 52, height: 52 },
+        { x: 0, y: 0, width: 52, height: 52 },
+        { x: 0, y: 0, width: 52, height: 52 },
+        { x: 0, y: 0, width: 52, height: 52 },
+        { x: 0, y: 0, width: 52, height: 52 },
+      ],
+    },
+  },
 ]
 
 export default textures

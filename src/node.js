@@ -6,8 +6,8 @@ import * as Trig from './trig.js'
  * is rendered at a location with a direction.
  */
 export class Node {
-  constructor(imageName, offsetX = 0, offsetY = 0, rotation = 0) {
-    this.node = Stage.image(imageName)
+  constructor(node, offsetX = 0, offsetY = 0, rotation = 0) {
+    this.node = node
     this.offsetX = offsetX
     this.offsetY = offsetY
     this.rotation = rotation
