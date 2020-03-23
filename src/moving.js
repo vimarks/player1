@@ -7,7 +7,7 @@ import * as Trig from './trig.js'
  */
 export class Moving extends Node {
   constructor(
-    imageName,
+    node,
     offsetX,
     offsetY,
     rotation,
@@ -15,7 +15,8 @@ export class Moving extends Node {
     velocityY = 0,
     spin = 0
   ) {
-    super(imageName, offsetX, offsetY, rotation)
+    super(node, offsetX, offsetY, rotation)
+
     this.velocityX = velocityX
     this.velocityY = velocityY
     this.spin = spin
