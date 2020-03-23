@@ -3,6 +3,7 @@ import { constants } from './constants.js'
 import { Actions } from './actions.js'
 import { Bullet } from './bullet.js'
 import { Moving } from './moving.js'
+import { Node } from './node.js'
 import * as Trig from './trig.js'
 
 export class Shuttle extends Moving {
@@ -119,14 +120,14 @@ export class Shuttle extends Moving {
   }
 }
 
-export class Explode extends Moving {
+export class Explode extends Node {
   constructor(offsetX, offsetY) {
     let node = Stage.anim('explosion')
     super(node, offsetX, offsetY)
   }
+
   start(stage) {
     super.start(stage)
-    this.node.play()
-    console.log('start')
+    this.node.repeat(1, () => this.remove())
   }
 }
