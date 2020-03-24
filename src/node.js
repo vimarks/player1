@@ -1,4 +1,3 @@
-import Stage from 'stage-js/platform/web'
 import * as Trig from './trig.js'
 
 /**
@@ -6,23 +5,26 @@ import * as Trig from './trig.js'
  * is rendered at a location with a direction.
  */
 export class Node {
-  constructor(node, offsetX = 0, offsetY = 0, rotation = 0) {
+  constructor(node, offsetX = 0, offsetY = 0, rotation = 0, scale = 1) {
     this.node = node
     this.offsetX = offsetX
     this.offsetY = offsetY
     this.rotation = rotation
+    this.scale = scale
+    this.removeCallbacks = new Set()
   }
 
   start(stage) {
     // Add the node to the parent node
     this.node.appendTo(stage)
 
-    // Set the node's pinned location and rotation values
+    // Set the node's pinned location, rotation, and scale values
     this.node.pin({
       align: 0.5,
       offsetX: this.offsetX,
       offsetY: this.offsetY,
       rotation: this.rotation,
+      scale: this.scale,
     })
 
     // Register the tick method
@@ -58,6 +60,14 @@ export class Node {
    */
   remove() {
     this.node.remove()
+    this.removeCallbacks.forEach(cb => cb(this))
+  }
+
+  /**
+   * Register a callback for when the object is removed.
+   */
+  onRemove(callback) {
+    this.removeCallbacks.add(callback)
   }
 
   /**
@@ -78,5 +88,13 @@ export class Node {
   rotateTo(newRotation) {
     this.rotation = Trig.normalizeAngle(newRotation)
     this.node.pin('rotation', newRotation)
+  }
+
+  /**
+   * Updates the scale ratio of the node.
+   */
+  scaleTo(newScale) {
+    this.scale = newScale
+    this.node.pin('scale', newScale)
   }
 }

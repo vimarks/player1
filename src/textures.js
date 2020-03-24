@@ -1,6 +1,6 @@
 import Stage from 'stage-js/platform/web'
 
-const textures = [
+export default [
   {
     image: 'static/shuttle.png',
     textures: {
@@ -43,12 +43,13 @@ const textures = [
       ],
     },
   },
+
   {
     textures: {
       text: function (d) {
         d += ''
         return Stage.canvas(function (ctx) {
-          var ratio = 2
+          let ratio = 2
           this.size(16, 24, ratio)
           ctx.scale(ratio, ratio)
           ctx.font = 'bold 24px monospace'
@@ -60,5 +61,3 @@ const textures = [
     },
   },
 ]
-
-export default textures

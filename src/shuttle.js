@@ -9,9 +9,7 @@ import * as Trig from './trig.js'
 export class Shuttle extends Moving {
   constructor(rockMaker, source) {
     // Initialize with the 'shuttle' image at the center of the screen
-    let node = Stage.image('shuttle')
-    super(node)
-
+    super(Stage.image('shuttle'))
     this.reloading = false
     this.rockMaker = rockMaker
     this.actions = new Actions(this.node, source, [
@@ -26,7 +24,7 @@ export class Shuttle extends Moving {
   start(stage) {
     super.start(stage)
 
-    // Listen for events we care about
+    // Listen for actions we care about
     this.actions.start(stage)
 
     // Fire a bullet on the 'fire' action
