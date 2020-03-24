@@ -5,6 +5,7 @@
   "private": true,
   "dependencies": {},
   "devDependencies": {
+    "prettier": "^2.0.1",
     "stage-js": "^0.8.11",
     "webpack": "^4.42.0",
     "webpack-cli": "^3.3.11",
@@ -12,6 +13,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "check": "prettier --check src",
     "build": "webpack",
     "start": "webpack-dev-server --content-base dist --open -d"
   },
