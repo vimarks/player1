@@ -8,8 +8,10 @@ export class Bullet extends Moving {
     // Given velocity and rotation are from the shuttle when the bullet was
     // fired, so add velocity direction the ship was facing to make the bullet
     // fly away from the ship
-    let newVelocityX = velocityX + Trig.calculateHorizontal(rotation, constants.bulletVelocity)
-    let newVelocityY = velocityY + Trig.calculateVertical(rotation, constants.bulletVelocity)
+    let newVelocityX =
+      velocityX + Trig.calculateHorizontal(rotation, constants.bulletVelocity)
+    let newVelocityY =
+      velocityY + Trig.calculateVertical(rotation, constants.bulletVelocity)
 
     // Initialize with the 'bullet' image with the location and rotation of the
     // shuttle but with the new velocity
