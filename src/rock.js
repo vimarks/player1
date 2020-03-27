@@ -29,8 +29,6 @@ class Rock extends Moving {
   constructor(stage, rockSet) {
     // Helper to randomly choose number in range [-n, n).
     let randRange = n => Math.random() * 2 * n - n
-    // Helper to randomly choose number in range [max, min)
-    let setRange = (min, max) => Math.random() * (max - min) + min
 
     let velocityX = randRange(constants.rockMaxVelocity)
     let velocityY = randRange(constants.rockMaxVelocity)
@@ -52,10 +50,6 @@ class Rock extends Moving {
 
     let scale = Math.random() * constants.rockMaxScale
     this.node.scale({ x: scale, y: scale })
-    // spin the rocks
-    this.node
-      .tween(setRange(25, 50) * 1000)
-      .pin({ rotation: randRange(10) * Math.PI })
   }
 
   remove() {

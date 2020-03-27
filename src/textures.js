@@ -1,3 +1,5 @@
+import Stage from 'stage-js/platform/web'
+
 const textures = [
   {
     image: 'static/shuttle.png',
@@ -39,6 +41,22 @@ const textures = [
         { x: 0, y: 104, width: 52, height: 52 },
         { x: 52, y: 104, width: 52, height: 52 },
       ],
+    },
+  },
+  {
+    textures: {
+      text: function(d) {
+        d += ''
+        return Stage.canvas(function(ctx) {
+          var ratio = 2
+          this.size(16, 24, ratio)
+          ctx.scale(ratio, ratio)
+          ctx.font = 'bold 24px monospace'
+          ctx.fillStyle = '#ddd'
+          ctx.textBaseline = 'top'
+          ctx.fillText(d, 0, 1)
+        })
+      },
     },
   },
 ]

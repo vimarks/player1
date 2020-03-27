@@ -31,6 +31,9 @@ export let constants = {
   // The base speed of rock spinning.
   rockSpinSpeed: 1,
 
+  // Initial amount of time given in minutes
+  initTimeLimit: 1,
+
   // The viewbox resolution, defaults to super retina.
   viewbox: {
     width: 2436,
