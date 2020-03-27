@@ -7,11 +7,11 @@ import { Node } from './node.js'
 import * as Trig from './trig.js'
 
 export class Shuttle extends Moving {
-  constructor(rockMaker, source) {
+  constructor(source) {
     // Initialize with the 'shuttle' image at the center of the screen
     super(Stage.image('shuttle'))
+    this.bulletSet = new Set()
     this.reloading = false
-    this.rockMaker = rockMaker
     this.actions = new Actions(this.node, source, [
       'fire',
       'focus',
@@ -35,6 +35,9 @@ export class Shuttle extends Moving {
     this.actions.onClear('turnLeft', () => this.turnRight())
     this.actions.on('turnRight', () => this.turnRight())
     this.actions.onClear('turnRight', () => this.turnLeft())
+
+    // Listen for events
+    this.node.on('event.explode', () => this.explode(stage))
   }
 
   tick(dt, stage) {
@@ -56,15 +59,8 @@ export class Shuttle extends Moving {
         dt
       )
     }
-
-    // continually check if any on-screen rock is touching the shuttle
-    let rockSet = this.rockMaker.rockSet
-    for (let n of rockSet) {
-      if (this.collisionDetection(n)) {
-        this.explode(stage)
-      }
-    }
   }
+
   explode(stage) {
     this.node.remove()
     let explosion = new Explode(this.offsetX, this.offsetY)
@@ -102,6 +98,9 @@ export class Shuttle extends Moving {
       this.velocityX,
       this.velocityY
     )
+
+    this.bulletSet.add(bullet)
+    bullet.onRemove(() => this.bulletSet.delete(bullet))
 
     // Start the bullet, relative to the same parent node as the shuttle,
     // so that the shuttle movement does not affect the bullet.

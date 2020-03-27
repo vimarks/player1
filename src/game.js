@@ -2,6 +2,7 @@ import Stage from 'stage-js/platform/web'
 import constants from './constants.js'
 import { Node } from './node.js'
 import { Input } from './input.js'
+import { Collisions } from './collision.js'
 import { Shuttle } from './shuttle.js'
 import { RockMaker } from './rock.js'
 import { Timer } from './timer.js'
@@ -16,8 +17,9 @@ export class Game extends Node {
 
     let game = this.node
     let input = new Input()
+    let collisions = new Collisions()
     let rockMaker = new RockMaker()
-    let shuttle = new Shuttle(rockMaker, input.source)
+    let shuttle = new Shuttle(input.source)
     let timer = new Timer(constants.initTimeLimit, shuttle)
 
     // Initialize input events
@@ -27,6 +29,11 @@ export class Game extends Node {
     shuttle.start(game)
     rockMaker.start(game)
     timer.start(game)
+
+    // Initialize the collisions
+    collisions.start(stage)
+    collisions.on([shuttle], 'explode', rockMaker.rockSet)
+    collisions.on(rockMaker.rockSet, 'ricochet', shuttle.bulletSet, 'remove')
 
     // Initialize the screen
     stage.background(constants.backgroundColor)

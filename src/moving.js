@@ -80,6 +80,21 @@ export class Moving extends Node {
   }
 
   /**
+   * Apply an instant velocity change from a ricochet with the given node.
+   */
+  ricochet(that, amount, maxVelocity, dt) {
+    let direction =
+      Math.PI +
+      Trig.calculateAngle(
+        this.offsetX,
+        this.offsetY,
+        that.offsetX,
+        that.offsetY
+      )
+    this.accelerate(direction, amount, maxVelocity, dt)
+  }
+
+  /**
    * Move the node based on its current velocity. If the node leaves the edge
    * of the screen, calls the appropriate onLeave*() callback.
    */

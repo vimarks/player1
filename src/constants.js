@@ -31,6 +31,9 @@ export default {
   // The base speed of rock spinning.
   rockSpinSpeed: 1,
 
+  // The ricochet power when a bullet hits a rock.
+  rockRicochet: 200,
+
   // Initial amount of time given in minutes
   initTimeLimit: 1,
 
