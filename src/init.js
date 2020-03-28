@@ -4,11 +4,11 @@ import { Shuttle } from './shuttle.js'
 import { RockMaker } from './rock.js'
 import { Timer } from './timer.js'
 
-export default function (stage) {
+export default function(stage) {
   let input = new Input()
   let rockMaker = new RockMaker()
   let shuttle = new Shuttle(rockMaker, input.source)
-  let timer = new Timer(constants.initTimeLimit, 0, 0)
+  let timer = new Timer(constants.initTimeLimit, 0, 0, shuttle)
 
   // Initialize input events
   input.start(stage)

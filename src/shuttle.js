@@ -63,11 +63,14 @@ export class Shuttle extends Moving {
     let rockSet = this.rockMaker.rockSet
     for (let n of rockSet) {
       if (this.collisionDetection(n)) {
-        this.node.remove()
-        let explosion = new Explode(this.offsetX, this.offsetY)
-        explosion.start(stage)
+        this.explode(stage)
       }
     }
+  }
+  explode(stage) {
+    this.node.remove()
+    let explosion = new Explode(this.offsetX, this.offsetY)
+    explosion.start(stage)
   }
 
   turnLeft() {
