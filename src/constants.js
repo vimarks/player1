@@ -1,4 +1,4 @@
-export let constants = {
+export default {
   // All motion that is relative to framerate should multiply the `dt` value
   // by this coefficient. Changing this value can slow down or speed up the
   // entire game.
@@ -33,6 +33,9 @@ export let constants = {
 
   // Initial amount of time given in minutes
   initTimeLimit: 1,
+
+  // The screen background color.
+  backgroundColor: '#231f20',
 
   // The viewbox resolution, defaults to super retina.
   viewbox: {

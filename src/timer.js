@@ -2,15 +2,15 @@ import Stage from 'stage-js/platform/web'
 import { Node } from './node.js'
 
 export class Timer extends Node {
-  constructor(timeLimit, offsetX, offsetY, shuttle) {
-    let node = Stage.string('text')
-    super(node, offsetX, offsetY)
+  constructor(timeLimit, shuttle) {
+    super(Stage.string('text'))
     this.timeLimit = timeLimit
     this.shuttle = shuttle
   }
 
   start(stage) {
     super.start(stage)
+    this.node.pin({ alignY: 0.95 })
     this.node.value(`${this.timeLimit}:00`)
     this.startCountDownTimer(stage)
   }

@@ -1,4 +1,4 @@
-import { constants } from './constants.js'
+import constants from './constants.js'
 import { Node } from './node.js'
 import * as Trig from './trig.js'
 

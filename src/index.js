@@ -1,7 +1,7 @@
 import Stage from 'stage-js/platform/web'
 import textures from './textures.js'
-import init from './init.js'
+import { Game } from './game.js'
 
 // Initialize the application.
 textures.forEach(texture => Stage(texture))
-Stage(init)
+Stage(stage => new Game().start(stage))
