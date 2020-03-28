@@ -18,8 +18,8 @@ export class Timer extends Node {
   // Starts & updates timer every second
   startCountDownTimer(stage) {
     this.intervalID = setInterval(
-      (function(self) {
-        return function() {
+      (function (self) {
+        return function () {
           self.updateCountDownTimer(stage)
         }
       })(this),
@@ -28,7 +28,6 @@ export class Timer extends Node {
   }
   // Check if time will be up
   updateCountDownTimer(stage) {
-    console.log('update')
     let currentTime = this.getCurrentTime()
     if (currentTime > 0) {
       if (currentTime - 1 == 0) {
