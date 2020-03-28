@@ -29,6 +29,9 @@ export class Node {
 
     // Register the tick method
     this.node.tick(dt => this.tick(dt, stage))
+
+    // Listen for common events
+    this.node.on('event.remove', () => this.remove())
   }
 
   tick(dt, stage) {
@@ -43,16 +46,33 @@ export class Node {
   }
 
   /**
+   * Check if the node is currently visible on-screen.
+   */
+  get visible() {
+    return this.node.parent() != null
+  }
+
+  /**
    * Detect collision between this node and another.
    */
-  collisionDetection(other) {
-    let d = Trig.calculateDistance(
-      this.offsetX,
-      this.offsetY,
-      other.offsetX,
-      other.offsetY
-    )
-    return d <= this.radius + other.radius
+  touching(that) {
+    let radiusSum = this.radius + that.radius
+    if (
+      !this.visible ||
+      !that.visible ||
+      Math.abs(this.offsetX - that.offsetX) > radiusSum ||
+      Math.abs(this.offsetY - that.offsetY) > radiusSum
+    ) {
+      return false
+    } else {
+      let d = Trig.calculateDistance(
+        this.offsetX,
+        this.offsetY,
+        that.offsetX,
+        that.offsetY
+      )
+      return d <= radiusSum
+    }
   }
 
   /**

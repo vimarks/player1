@@ -57,6 +57,14 @@ class Rock extends Moving {
     super(node, offsetX, offsetY, rotation, scale, velocityX, velocityY, spin)
   }
 
+  start(stage) {
+    super.start(stage)
+
+    this.node.on('event.ricochet', bullet =>
+      this.ricochet(bullet, constants.rockRicochet, 0)
+    )
+  }
+
   onLeave() {
     this.remove()
   }
