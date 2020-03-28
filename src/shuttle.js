@@ -1,5 +1,5 @@
 import Stage from 'stage-js/platform/web'
-import { constants } from './constants.js'
+import constants from './constants.js'
 import { Actions } from './actions.js'
 import { Bullet } from './bullet.js'
 import { Moving } from './moving.js'
