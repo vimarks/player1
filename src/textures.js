@@ -45,9 +45,9 @@ const textures = [
   },
   {
     textures: {
-      text: function(d) {
+      text: function (d) {
         d += ''
-        return Stage.canvas(function(ctx) {
+        return Stage.canvas(function (ctx) {
           var ratio = 2
           this.size(16, 24, ratio)
           ctx.scale(ratio, ratio)
