@@ -2,6 +2,10 @@ import Stage from 'stage-js/platform/web'
 import { constants } from './constants.js'
 import { Moving } from './moving.js'
 
+function randRange(max) {
+  return Math.random() * 2 * max - max
+}
+
 export class RockMaker {
   constructor() {
     this.numRocksStart = 10
@@ -15,47 +19,42 @@ export class RockMaker {
 
   maybeMakeRocks(stage) {
     if (Math.random() < constants.newRockChance) {
-      let rock = new Rock(stage, this.rockSet)
-      // rockSet keeps track of all rocks on-screen
-      // add rock to rockSet
+      let rock = this.makeRock(stage)
       this.rockSet.add(rock)
-
+      rock.onRemove(() => this.rockSet.delete(rock))
       rock.start(stage)
+    }
+  }
+
+  makeRock(stage) {
+    let velocityX = randRange(constants.rockMaxVelocity)
+    let velocityY = randRange(constants.rockMaxVelocity)
+    let scale = Math.random() * constants.rockMaxScale
+
+    if (Math.random() < 0.5) {
+      // Start the rock on the left or right side
+      let offsetX = stage.width() / 2
+      let offsetY = randRange(stage.height() / 2)
+      if (velocityX > 0) offsetX = -offsetX
+      return new Rock(offsetX, offsetY, scale, velocityX, velocityY)
+    } else {
+      // Start the rock on the top or bottom side
+      let offsetX = randRange(stage.width() / 2)
+      let offsetY = stage.height() / 2
+      if (velocityY > 0) offsetY = -offsetY
+      return new Rock(offsetX, offsetY, scale, velocityX, velocityY)
     }
   }
 }
 
 class Rock extends Moving {
-  constructor(stage, rockSet) {
-    // Helper to randomly choose number in range [-n, n).
-    let randRange = n => Math.random() * 2 * n - n
-
-    let velocityX = randRange(constants.rockMaxVelocity)
-    let velocityY = randRange(constants.rockMaxVelocity)
-
-    let offsetX = stage.width() / 2
-    let offsetY = randRange(stage.height() / 2)
-    // Make sure rock begins on side it's moving away from.
-    if (velocityX > 0) offsetX = -offsetX
-
+  constructor(offsetX, offsetY, scale, velocityX, velocityY) {
     let rotation = Math.random() * 2 * Math.PI
 
     let maxSpin = constants.rockSpinSpeed
     let spin = Math.random() * 2 * maxSpin - maxSpin
-
     let node = Stage.image('rock')
-    super(node, offsetX, offsetY, rotation, velocityX, velocityY, spin)
-
-    this.rockSet = rockSet
-
-    let scale = Math.random() * constants.rockMaxScale
-    this.node.scale({ x: scale, y: scale })
-  }
-
-  remove() {
-    super.remove()
-    // remove rock from rockSet
-    this.rockSet.delete(this)
+    super(node, offsetX, offsetY, rotation, scale, velocityX, velocityY, spin)
   }
 
   onLeave() {

@@ -11,12 +11,12 @@ export class Moving extends Node {
     offsetX,
     offsetY,
     rotation,
+    scale,
     velocityX = 0,
     velocityY = 0,
     spin = 0
   ) {
-    super(node, offsetX, offsetY, rotation)
-
+    super(node, offsetX, offsetY, rotation, scale)
     this.velocityX = velocityX
     this.velocityY = velocityY
     this.spin = spin
@@ -26,23 +26,23 @@ export class Moving extends Node {
    * Gets the X-coordinate where the node disappears off the screen.
    */
   getRightEdge(stage) {
-    return (this.node.width() + stage.width()) / 2
+    return stage.width() / 2 + this.radius * 2
   }
 
   /**
    * Gets the Y-coordinate where the node disappears off the screen.
    */
   getBottomEdge(stage) {
-    return (this.node.height() + stage.height()) / 2
+    return stage.height() / 2 + this.radius * 2
   }
 
   /**
    * Moves the node relative to its current position, adjusted for framerate.
    */
   moveBy(xAmount, yAmount, dt) {
-    let adjustedDt = dt * constants.dtCoefficient
-    let relOffsetX = xAmount ? xAmount * adjustedDt : 0
-    let relOffsetY = yAmount ? yAmount * adjustedDt : 0
+    let adjust = dt ? dt * constants.dtCoefficient : 1
+    let relOffsetX = xAmount ? xAmount * adjust : 0
+    let relOffsetY = yAmount ? yAmount * adjust : 0
     if (relOffsetX !== 0 || relOffsetY !== 0) {
       this.moveTo(this.offsetX + relOffsetX, this.offsetY + relOffsetY)
     }
@@ -52,8 +52,8 @@ export class Moving extends Node {
    * Rotates the node relative to its current angle, adjusted for framerate.
    */
   rotateBy(amount, dt) {
-    let adjustedDt = dt * constants.dtCoefficient
-    let relRotation = amount ? amount * adjustedDt : 0
+    let adjust = dt ? dt * constants.dtCoefficient : 1
+    let relRotation = amount ? amount * adjust : 0
     if (relRotation !== 0) {
       this.rotateTo(this.rotation + relRotation)
     }
@@ -64,10 +64,10 @@ export class Moving extends Node {
    * direction, adjusted for framerate. If maxVelocity is given, the node
    * cannot accelerate faster than that value.
    */
-  accelerate(rotation, amount, maxVelocity, dt) {
-    let adjustedDt = dt * constants.dtCoefficient
-    this.velocityX += Trig.calculateHorizontal(rotation, amount * adjustedDt)
-    this.velocityY += Trig.calculateVertical(rotation, amount * adjustedDt)
+  accelerate(direction, amount, maxVelocity, dt) {
+    let adjust = dt ? dt * constants.dtCoefficient : 1
+    this.velocityX += Trig.calculateHorizontal(direction, amount * adjust)
+    this.velocityY += Trig.calculateVertical(direction, amount * adjust)
 
     if (maxVelocity) {
       let velocity = Trig.calculateDistance(this.velocityX, this.velocityY)
