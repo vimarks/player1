@@ -29,7 +29,7 @@ export class Bullet extends Moving {
   }
 
   /**
-   * When the shuttle leaves the screen, wrap it around vertically or
+   * When the bullet leaves the screen, wrap it around vertically or
    * horizontally.
    */
   onLeave(side) {
