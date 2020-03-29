@@ -1,10 +1,7 @@
 import Stage from 'stage-js/platform/web'
 import constants from './constants.js'
 import { Moving } from './moving.js'
-
-function randRange(max) {
-  return Math.random() * 2 * max - max
-}
+import { randRange, randNormal, randSign } from './rand.js'
 
 export class RockMaker {
   constructor() {
@@ -27,19 +24,32 @@ export class RockMaker {
   }
 
   makeRock(stage) {
-    let velocityX = randRange(constants.rockMaxVelocity)
-    let velocityY = randRange(constants.rockMaxVelocity)
-    let scale = Math.random() * constants.rockMaxScale
+    let velocityX =
+      randSign() *
+      randNormal(
+        constants.rockVelocityDist.mu,
+        constants.rockVelocityDist.sigma
+      )
+    let velocityY =
+      randSign() *
+      randNormal(
+        constants.rockVelocityDist.mu,
+        constants.rockVelocityDist.sigma
+      )
+    let scale = randNormal(
+      constants.rockSizeDist.mu,
+      constants.rockSizeDist.sigma
+    )
 
     if (Math.random() < 0.5) {
       // Start the rock on the left or right side
       let offsetX = stage.width() / 2
-      let offsetY = randRange(stage.height() / 2)
+      let offsetY = randRange(-stage.height() / 2, stage.height() / 2)
       if (velocityX > 0) offsetX = -offsetX
       return new Rock(offsetX, offsetY, scale, velocityX, velocityY)
     } else {
       // Start the rock on the top or bottom side
-      let offsetX = randRange(stage.width() / 2)
+      let offsetX = randRange(-stage.width() / 2, stage.width() / 2)
       let offsetY = stage.height() / 2
       if (velocityY > 0) offsetY = -offsetY
       return new Rock(offsetX, offsetY, scale, velocityX, velocityY)
@@ -49,10 +59,8 @@ export class RockMaker {
 
 class Rock extends Moving {
   constructor(offsetX, offsetY, scale, velocityX, velocityY) {
-    let rotation = Math.random() * 2 * Math.PI
-
-    let maxSpin = constants.rockSpinSpeed
-    let spin = Math.random() * 2 * maxSpin - maxSpin
+    let rotation = randRange(0, 2 * Math.PI)
+    let spin = randRange(-constants.rockSpinSpeed, constants.rockSpinSpeed)
     let node = Stage.image('rock')
     super(node, offsetX, offsetY, rotation, scale, velocityX, velocityY, spin)
   }

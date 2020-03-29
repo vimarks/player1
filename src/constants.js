@@ -22,11 +22,11 @@ export default {
   // Probability that RockMaker creates new rocks.
   newRockChance: 0.4,
 
-  // Maximum velocity of a rock.
-  rockMaxVelocity: 95,
+  // Determines shape of normal distribution from which rock velocity is chosen.
+  rockVelocityDist: { mu: 75, sigma: 20 },
 
-  // Determines maximum size of new rocks.
-  rockMaxScale: 3,
+  // Determines shape of normal distribution from which rock size is chosen.
+  rockSizeDist: { mu: 2, sigma: 0.25 },
 
   // The base speed of rock spinning.
   rockSpinSpeed: 1,
