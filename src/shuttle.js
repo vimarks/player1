@@ -36,8 +36,8 @@ export class Shuttle extends Moving {
     this.actions.on('turnRight', () => this.turnRight())
     this.actions.onClear('turnRight', () => this.turnLeft())
 
-    // Listen for events
-    this.node.on('event.explode', () => this.explode(stage))
+    // Explode on removal
+    this.remove.on(() => this.explode(stage))
   }
 
   tick(dt, stage) {
@@ -62,7 +62,6 @@ export class Shuttle extends Moving {
   }
 
   explode(stage) {
-    this.node.remove()
     let explosion = new Explode(this.offsetX, this.offsetY)
     explosion.start(stage)
   }
@@ -100,7 +99,7 @@ export class Shuttle extends Moving {
     )
 
     this.bulletSet.add(bullet)
-    bullet.onRemove(() => this.bulletSet.delete(bullet))
+    bullet.remove.on(() => this.bulletSet.delete(bullet))
 
     // Start the bullet, relative to the same parent node as the shuttle,
     // so that the shuttle movement does not affect the bullet.
@@ -128,6 +127,6 @@ export class Explode extends Node {
 
   start(stage) {
     super.start(stage)
-    this.node.repeat(1, () => this.remove())
+    this.node.repeat(1, () => this.remove.emit())
   }
 }

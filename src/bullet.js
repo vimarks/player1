@@ -32,7 +32,7 @@ export class Bullet extends Moving {
     super.tick(dt, stage)
 
     if (performance.now() >= this.expires) {
-      this.node.remove()
+      this.remove.emit()
     }
   }
 
