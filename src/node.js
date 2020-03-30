@@ -1,4 +1,5 @@
 import * as Trig from './trig.js'
+import { Event } from './event.js'
 
 /**
  * Base class of anything that is drawn on the screen. The node
@@ -11,12 +12,16 @@ export class Node {
     this.offsetY = offsetY
     this.rotation = rotation
     this.scale = scale
-    this.removeCallbacks = new Set()
+    this.remove = new Event()
+  }
+
+  append(stage) {
+    // Add the node to the parent node
+    stage.first().append(this.node)
   }
 
   start(stage) {
-    // Add the node to the parent node
-    this.node.appendTo(stage)
+    this.append(stage)
 
     // Set the node's pinned location, rotation, and scale values
     this.node.pin({
@@ -30,8 +35,8 @@ export class Node {
     // Register the tick method
     this.node.tick(dt => this.tick(dt, stage))
 
-    // Listen for common events
-    this.node.on('event.remove', () => this.remove())
+    // Remove the node from the stage
+    this.remove.on(() => this.node.remove())
   }
 
   tick(dt, stage) {
@@ -73,21 +78,6 @@ export class Node {
       )
       return d <= radiusSum
     }
-  }
-
-  /**
-   * Remove the node from the screen and perform any additional cleanup.
-   */
-  remove() {
-    this.node.remove()
-    this.removeCallbacks.forEach(cb => cb(this))
-  }
-
-  /**
-   * Register a callback for when the object is removed.
-   */
-  onRemove(callback) {
-    this.removeCallbacks.add(callback)
   }
 
   /**

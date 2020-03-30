@@ -1,5 +1,6 @@
 import Stage from 'stage-js/platform/web'
 import constants from './constants.js'
+import { Event } from './event.js'
 import { Node } from './node.js'
 import { Input } from './input.js'
 import { Collisions } from './collision.js'
@@ -12,41 +13,51 @@ export class Game extends Node {
     super(Stage.create())
   }
 
+  append(stage) {
+    // This node should always be stage.first()
+    stage.prepend(this.node)
+  }
+
   start(stage) {
     super.start(stage)
 
-    let game = this.node
     let input = new Input()
     let collisions = new Collisions()
     let rockMaker = new RockMaker()
+    let timer = new Timer(constants.initTimeLimit)
     let shuttle = new Shuttle(input.source)
-    let timer = new Timer(constants.initTimeLimit, shuttle)
+    let gameOver = new Event()
 
-    // Initialize input events
-    input.start(game)
-
-    // Initialize the shuttle, rocks, & timer
-    shuttle.start(game)
-    rockMaker.start(game)
-    timer.start(game)
-
-    // Initialize the collisions
+    // Initialize game mechanics
+    input.start(stage)
+    rockMaker.start(stage)
+    timer.start(stage)
     collisions.start(stage)
-    collisions.on([shuttle], 'explode', rockMaker.rockSet)
-    collisions.on(rockMaker.rockSet, 'ricochet', shuttle.bulletSet, 'remove')
+    shuttle.start(stage)
+
+    // Initialize the events
+    gameOver.trigger(shuttle.remove).trigger(timer.remove)
+    timer.expire.trigger(gameOver)
+    collisions.detect([shuttle], rockMaker.rockSet).trigger(gameOver)
+    collisions
+      .detect(rockMaker.rockSet, shuttle.bulletSet)
+      .triggerLeft(rock => rock.shoot)
+      .triggerRight(bullet => bullet.remove)
 
     // Initialize the screen
+    this.node.size(constants.viewbox.width, constants.viewbox.height)
+    this.node.pin({ align: 0.5 })
     stage.background(constants.backgroundColor)
-    stage.on('viewport', viewport => {
-      game.pin({ align: 0.5 })
-      game.size(constants.viewbox.width, constants.viewbox.height)
-      this.scaleScreen(game, viewport)
-    })
+    stage.on('viewport', viewport => this.scaleScreen(stage, viewport))
   }
 
-  scaleScreen(game, viewport) {
+  scaleScreen(stage, viewport) {
+    let game = this.node
     let gameRatio = game.width() / game.height()
     let viewportRatio = viewport.width / viewport.height
+
+    // The stage should take up the whole window
+    stage.size(viewport.width, viewport.height)
 
     if (gameRatio > viewportRatio) {
       // Screen is taller than the game

@@ -5,7 +5,7 @@ export function randRange(min, max) {
 
 // Returns number chosen from normal distribution with mean mu
 // and variance sigma
-export function randNormal(mu, sigma) {
+export function randNormal({ mu, sigma }) {
   // Adjust from boxMuller's unit normal distribution
   return boxMuller() * sigma + mu
 }

@@ -1,15 +1,23 @@
 import * as Trig from './trig.js'
+import { Event } from './event.js'
 
 /**
  * A collision "group", where every node in the left set is checked against
  * every node in the right set.
  */
-class Group {
-  constructor(leftSet, leftEvent, rightSet, rightEvent) {
+class Group extends Event {
+  constructor(leftSet, rightSet) {
+    super()
     this.leftSet = leftSet
-    this.leftEvent = leftEvent
     this.rightSet = rightSet
-    this.rightEvent = rightEvent
+  }
+
+  triggerLeft(getEvent) {
+    return this.on((left, right) => getEvent(left).emit(right))
+  }
+
+  triggerRight(getEvent) {
+    return this.on((left, right) => getEvent(right).emit(left))
   }
 }
 
@@ -25,8 +33,10 @@ export class Collisions {
    * Register a new collision group. Every node in `leftSet` is checked with
    * every node in `rightSet`.
    */
-  on(leftSet, leftEvent, rightSet, rightEvent) {
-    this.groups.push(new Group(leftSet, leftEvent, rightSet, rightEvent))
+  detect(leftSet, rightSet) {
+    let group = new Group(leftSet, rightSet)
+    this.groups.push(group)
+    return group
   }
 
   start(stage) {
@@ -42,13 +52,8 @@ export class Collisions {
         for (const right of group.rightSet) {
           // ...check if the left node is touching the right node...
           if (left !== right && left.touching(right)) {
-            // ...and publish events if so
-            if (group.leftEvent) {
-              left.node.publish(`event.${group.leftEvent}`, [right])
-            }
-            if (group.rightEvent) {
-              right.node.publish(`event.${group.rightEvent}`, [left])
-            }
+            // ...and emit the event if so
+            group.emit(left, right)
           }
         }
       }
