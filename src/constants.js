@@ -22,6 +22,9 @@ export default {
   // Probability that RockMaker creates new rocks.
   newRockChance: 0.4,
 
+  // Probability that CrystalMaker creates new crystals.
+  newCrystalChance: 0.4,
+
   // Determines shape of normal distribution from which rock velocity is chosen.
   rockVelocityDist: { mu: 75, sigma: 20 },
 

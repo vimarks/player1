@@ -7,6 +7,7 @@ export class Timer extends Node {
     super(Stage.string('text'))
     this.timeLimit = timeLimit
     this.expire = new Event()
+    this.addTime = new Event()
   }
 
   append(stage) {
@@ -19,6 +20,7 @@ export class Timer extends Node {
     this.node.pin({ alignY: 0.95 })
     this.setCountDownTimer(this.timeLimit * 60)
     this.startCountDownTimer(stage)
+    this.addTime.on(() => this.extendTimer())
   }
 
   // Starts & updates timer every second
@@ -61,5 +63,10 @@ export class Timer extends Node {
     let seconds = timeLeft % 60
     let secondsStr = `${seconds}`.padStart(2, '0')
     this.node.value(`${minutes}:${secondsStr}`)
+  }
+
+  extendTimer() {
+    let currentTime = this.getCurrentTime()
+    this.setCountDownTimer(currentTime + 5)
   }
 }

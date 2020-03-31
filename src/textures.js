@@ -1,4 +1,5 @@
 import Stage from 'stage-js/platform/web'
+import * as Trig from './trig.js'
 
 export default [
   {
@@ -41,6 +42,14 @@ export default [
         { x: 0, y: 104, width: 52, height: 52 },
         { x: 52, y: 104, width: 52, height: 52 },
       ],
+    },
+  },
+  {
+    image: {
+      src: 'static/crystalSpriteSheet.png',
+    },
+    textures: {
+      crystal: Trig.buildTexture(36, 5, 50, 90),
     },
   },
 
