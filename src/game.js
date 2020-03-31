@@ -6,6 +6,7 @@ import { Input } from './input.js'
 import { Collisions } from './collision.js'
 import { Shuttle } from './shuttle.js'
 import { RockMaker } from './rock.js'
+import { CrystalMaker } from './crystal.js'
 import { Timer } from './timer.js'
 
 export class Game extends Node {
@@ -24,6 +25,7 @@ export class Game extends Node {
     let input = new Input()
     let collisions = new Collisions()
     let rockMaker = new RockMaker()
+    let crystalMaker = new CrystalMaker()
     let timer = new Timer(constants.initTimeLimit)
     let shuttle = new Shuttle(input.source)
     let gameOver = new Event()
@@ -31,6 +33,7 @@ export class Game extends Node {
     // Initialize game mechanics
     input.start(stage)
     rockMaker.start(stage)
+    crystalMaker.start(stage)
     timer.start(stage)
     collisions.start(stage)
     shuttle.start(stage)
@@ -38,11 +41,18 @@ export class Game extends Node {
     // Initialize the events
     gameOver.trigger(shuttle.remove).trigger(timer.remove)
     timer.expire.trigger(gameOver)
+
     collisions.detect([shuttle], rockMaker.rockSet).trigger(gameOver)
+
     collisions
       .detect(rockMaker.rockSet, shuttle.bulletSet)
       .triggerLeft(rock => rock.shoot)
       .triggerRight(bullet => bullet.remove)
+
+    collisions
+      .detect([shuttle], crystalMaker.crystalSet)
+      .trigger(timer.addTime)
+      .triggerRight(crystal => crystal.remove)
 
     // Initialize the screen
     this.node.size(constants.viewbox.width, constants.viewbox.height)

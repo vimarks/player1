@@ -43,6 +43,14 @@ export default [
       ],
     },
   },
+  {
+    image: {
+      src: 'static/crystalSpriteSheet.png',
+    },
+    textures: {
+      crystal: buildTexture(36, 5, 50, 90),
+    },
+  },
 
   {
     textures: {
@@ -61,3 +69,21 @@ export default [
     },
   },
 ]
+
+function buildTexture(rows, cols, w, h) {
+  let texture = []
+  let x = 0
+  let y = 0
+  for (let i = 0; i < rows; i++) {
+    if (y != 0) {
+      texture.push({ x, y, width: w, height: h })
+    }
+    x = 0
+    for (let i = 0; i < cols - 1; i++) {
+      texture.push({ x, y, width: w, height: h })
+      x += w
+    }
+    y += h
+  }
+  return texture
+}
