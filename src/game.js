@@ -1,12 +1,11 @@
-import Stage from 'stage-js/platform/web'
 import constants from './constants.js'
 import sounds from './sounds.js'
 import { Event } from './event.js'
 import { Node } from './node.js'
 import { Input } from './input.js'
+import { State } from './state/index.js'
 import { Collisions } from './collision.js'
 import { Shuttle } from './shuttle.js'
-import { RockMaker } from './rock.js'
 import { CrystalMaker } from './crystal.js'
 import { Timer } from './timer.js'
 import { Vault } from './vault.js'
@@ -26,21 +25,21 @@ export class Game extends Node {
 
     let input = new Input()
     let collisions = new Collisions()
-    let rockMaker = new RockMaker()
     let crystalMaker = new CrystalMaker()
     let timer = new Timer(constants.initTimeLimit)
     let vault = new Vault(constants.initBalance)
     let shuttle = new Shuttle(input.source)
     let gameOver = new Event()
+    let state = new State(constants.serverUrl)
 
     // Initialize game mechanics
     input.start(stage)
-    rockMaker.start(stage)
     crystalMaker.start(stage)
     timer.start(stage)
     vault.start(stage)
     collisions.start(stage)
     shuttle.start(stage)
+    state.start(stage)
 
     // Initialize the events
     gameOver
@@ -51,12 +50,12 @@ export class Game extends Node {
     timer.expire.trigger(gameOver)
 
     collisions
-      .detect([shuttle], rockMaker.rockSet)
+      .detect([shuttle], state.rockMap)
       .trigger(sounds.explosion)
       .trigger(gameOver)
 
     collisions
-      .detect(rockMaker.rockSet, shuttle.bulletSet)
+      .detect(state.rockMap, shuttle.bulletSet)
       .triggerLeft(rock => rock.shoot)
       .triggerRight(bullet => bullet.remove)
 

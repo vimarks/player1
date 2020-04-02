@@ -1,4 +1,3 @@
-import Stage from 'stage-js/platform/web'
 import constants from './constants.js'
 import { Moving } from './moving.js'
 import * as Trig from './trig.js'
@@ -26,6 +25,11 @@ export class Bullet extends Moving {
       newVelocityY
     )
     this.expires = performance.now() + constants.bulletDecay
+  }
+
+  start(stage) {
+    super.start(stage)
+    this.leave.on(side => this.onLeave(side))
   }
 
   tick(dt, stage) {

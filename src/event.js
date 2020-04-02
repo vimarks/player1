@@ -3,7 +3,7 @@
  * When emitted, events call all registered callbacks.
  */
 export class Event {
-  constructor(...preArgs) {
+  constructor(preArgs = []) {
     this.preArgs = preArgs
     this.callbacks = []
   }
@@ -28,5 +28,19 @@ export class Event {
    */
   emit(...args) {
     this.callbacks.forEach(cb => cb(...this.preArgs, ...args))
+  }
+
+  /**
+   * Any calls to emit while running the function will prepend the given
+   * arguments to the emit.
+   */
+  bindPre(values, during) {
+    const before = this.preArgs
+    this.preArgs = values
+    try {
+      during()
+    } finally {
+      this.preArgs = before
+    }
   }
 }

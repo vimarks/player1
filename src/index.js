@@ -1,4 +1,3 @@
-import Stage from 'stage-js/platform/web'
 import textures from './textures.js'
 import { Game } from './game.js'
 
