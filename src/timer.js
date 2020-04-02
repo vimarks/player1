@@ -17,7 +17,7 @@ export class Timer extends Node {
 
   start(stage) {
     super.start(stage)
-    this.node.pin({ alignY: 0.95 })
+    this.node.pin({ alignY: 0.92 })
     this.setCountDownTimer(this.timeLimit * 60)
     this.startCountDownTimer(stage)
     this.addTime.on(() => this.extendTimer())

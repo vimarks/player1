@@ -40,6 +40,9 @@ export default {
   // Initial amount of time given in minutes
   initTimeLimit: 1,
 
+  // Initial number of crystals in vault at start of round.
+  initBalance: 0,
+
   // The screen background color.
   backgroundColor: '#231f20',
 
