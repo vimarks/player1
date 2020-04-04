@@ -56,11 +56,10 @@ export class Timer extends Node {
   // Check if time will be up
   updateCountDownTimer(stage) {
     let currentTime = this.getCurrentTime()
-    if (currentTime > 0) {
-      if (currentTime - 1 == 0) {
-        this.expire.emit()
-        clearInterval(this.intervalID)
-      }
+    if (currentTime - 1 == 0) {
+      this.expire.emit()
+      clearInterval(this.intervalID)
+    } else {
       // Subtracts 1 second
       this.setCountDownTimer(currentTime - 1)
     }
