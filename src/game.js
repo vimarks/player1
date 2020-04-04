@@ -42,7 +42,10 @@ export class Game extends Node {
     shuttle.start(stage)
 
     // Initialize the events
-    gameOver.trigger(shuttle.remove).trigger(timer.remove).trigger(vault.remove)
+    gameOver
+      .trigger(shuttle.remove)
+      .trigger(vault.showEndBalance)
+      .trigger(timer.showTotalTime)
 
     timer.expire.trigger(gameOver)
 
@@ -55,10 +58,9 @@ export class Game extends Node {
 
     collisions
       .detect([shuttle], crystalMaker.crystalSet)
-      .trigger(timer.addTime)
+      .trigger(timer.extendTimer)
+      .trigger(vault.bankCrystal)
       .triggerRight(crystal => crystal.remove)
-
-    timer.addTime.trigger(vault.bankCrystal)
 
     // Initialize the screen
     this.node.size(constants.viewbox.width, constants.viewbox.height)

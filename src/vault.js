@@ -7,6 +7,7 @@ export class Vault extends Node {
     super(Stage.string('text'))
     this.balance = balance
     this.bankCrystal = new Event()
+    this.showEndBalance = new Event()
   }
 
   append(stage) {
@@ -17,11 +18,16 @@ export class Vault extends Node {
   start(stage) {
     super.start(stage)
     this.node.pin({ alignY: 0.95 })
-
     this.bankCrystal.on(() => this.updateBalance())
+    this.showEndBalance.on(() => this.displayEndBalance())
   }
 
   updateBalance() {
-    this.node.value(`crystals: ${(this.balance += 1)}`)
+    this.node.value(`crystal:  ${(this.balance += 1)}`)
+  }
+
+  displayEndBalance() {
+    this.node.value(`crystals collected: ${this.balance}`)
+    this.node.pin({ alignY: 0.45 })
   }
 }
