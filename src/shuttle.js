@@ -1,5 +1,6 @@
 import Stage from 'stage-js/platform/web'
 import constants from './constants.js'
+import sounds from './sounds.js'
 import { Actions } from './actions.js'
 import { Bullet } from './bullet.js'
 import { Moving } from './moving.js'
@@ -104,6 +105,7 @@ export class Shuttle extends Moving {
     // Start the bullet, relative to the same parent node as the shuttle,
     // so that the shuttle movement does not affect the bullet.
     this.visible && bullet.start(stage)
+    sounds.shootLaser.emit()
   }
 
   /**

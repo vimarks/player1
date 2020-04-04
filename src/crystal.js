@@ -1,6 +1,6 @@
 import Stage from 'stage-js/platform/web'
 import constants from './constants.js'
-import { Event } from './event.js'
+import sounds from './sounds.js'
 import { Moving } from './moving.js'
 import { randRange } from './rand.js'
 
@@ -19,6 +19,7 @@ export class CrystalMaker {
       this.crystalSet.add(crystal)
       crystal.remove.on(() => this.crystalSet.delete(crystal))
       crystal.start(stage)
+      sounds.crystalSpawn.emit()
     }
   }
 

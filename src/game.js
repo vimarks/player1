@@ -1,5 +1,6 @@
 import Stage from 'stage-js/platform/web'
 import constants from './constants.js'
+import sounds from './sounds.js'
 import { Event } from './event.js'
 import { Node } from './node.js'
 import { Input } from './input.js'
@@ -49,7 +50,10 @@ export class Game extends Node {
 
     timer.expire.trigger(gameOver)
 
-    collisions.detect([shuttle], rockMaker.rockSet).trigger(gameOver)
+    collisions
+      .detect([shuttle], rockMaker.rockSet)
+      .trigger(sounds.explosion)
+      .trigger(gameOver)
 
     collisions
       .detect(rockMaker.rockSet, shuttle.bulletSet)
@@ -60,6 +64,7 @@ export class Game extends Node {
       .detect([shuttle], crystalMaker.crystalSet)
       .trigger(timer.extendTimer)
       .trigger(vault.bankCrystal)
+      .trigger(sounds.crystalCapture)
       .triggerRight(crystal => crystal.remove)
 
     // Initialize the screen
