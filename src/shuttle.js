@@ -103,7 +103,7 @@ export class Shuttle extends Moving {
 
     // Start the bullet, relative to the same parent node as the shuttle,
     // so that the shuttle movement does not affect the bullet.
-    bullet.start(stage)
+    this.visible && bullet.start(stage)
   }
 
   /**

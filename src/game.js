@@ -8,6 +8,7 @@ import { Shuttle } from './shuttle.js'
 import { RockMaker } from './rock.js'
 import { CrystalMaker } from './crystal.js'
 import { Timer } from './timer.js'
+import { Vault } from './vault.js'
 
 export class Game extends Node {
   constructor() {
@@ -27,6 +28,7 @@ export class Game extends Node {
     let rockMaker = new RockMaker()
     let crystalMaker = new CrystalMaker()
     let timer = new Timer(constants.initTimeLimit)
+    let vault = new Vault(constants.initBalance)
     let shuttle = new Shuttle(input.source)
     let gameOver = new Event()
 
@@ -35,11 +37,16 @@ export class Game extends Node {
     rockMaker.start(stage)
     crystalMaker.start(stage)
     timer.start(stage)
+    vault.start(stage)
     collisions.start(stage)
     shuttle.start(stage)
 
     // Initialize the events
-    gameOver.trigger(shuttle.remove).trigger(timer.remove)
+    gameOver
+      .trigger(shuttle.remove)
+      .trigger(vault.showEndBalance)
+      .trigger(timer.showTotalTime)
+
     timer.expire.trigger(gameOver)
 
     collisions.detect([shuttle], rockMaker.rockSet).trigger(gameOver)
@@ -51,7 +58,8 @@ export class Game extends Node {
 
     collisions
       .detect([shuttle], crystalMaker.crystalSet)
-      .trigger(timer.addTime)
+      .trigger(timer.extendTimer)
+      .trigger(vault.bankCrystal)
       .triggerRight(crystal => crystal.remove)
 
     // Initialize the screen
