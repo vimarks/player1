@@ -37,18 +37,18 @@ export class State {
   start(stage) {
     // Initialize the shared state doc
     this.doc.initialize()
-    this.doc.updated.on((when, doc) => {
-      this.updateRocks(stage, when, doc.rocks)
-    })
 
     // Connect to the server to synchronize state
     let ws = new WebSocket(`${this.url}?game=${id}`)
-    let sendMsg = merge => new Message({ merge }).send(ws)
+    let sendMsg = merge => ws.send(JSON.stringify(new Message({ merge })))
     let conn = new Automerge.Connection(this.doc.docSet, sendMsg)
     let opened = false
     ws.onmessage = event => {
       const msg = Message.fromJSON(event.data)
-      this.doc.updated.bindPre([msg.time], () => conn.receiveMsg(msg.merge))
+      this.doc.updated.during(
+        () => conn.receiveMsg(msg.merge),
+        doc => this.updateRocks(stage, msg.time, doc.rocks)
+      )
       if (!opened) {
         conn.open()
         opened = true

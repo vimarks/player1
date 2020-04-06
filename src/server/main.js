@@ -40,12 +40,14 @@ wss.on('connection', (ws, req) => {
   const game = games.get(gameId)
 
   // Use the websocket to synchronize the state docs
-  const sendMsg = merge => new Message({ merge }).send(ws)
+  const sendMsg = merge => ws.send(JSON.stringify(new Message({ merge })))
   const conn = new Automerge.Connection(game.doc.docSet, sendMsg)
   ws.on('close', () => conn.close())
   ws.on('message', data => {
     const msg = Message.fromJSON(data)
-    game.doc.updated.bindPre([msg.time], () => conn.receiveMsg(msg.merge))
+    if (msg.merge) {
+      conn.receiveMsg(msg.merge)
+    }
   })
   conn.open()
 })

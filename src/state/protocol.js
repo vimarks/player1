@@ -13,8 +13,4 @@ export class Message {
   static fromJSON(str) {
     return new Message(JSON.parse(str))
   }
-
-  send(ws) {
-    ws.send(JSON.stringify(this))
-  }
 }
