@@ -1,4 +1,3 @@
-import Stage from 'stage-js/platform/web'
 import { Node } from './node.js'
 import { Event } from './event.js'
 

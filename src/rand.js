@@ -22,3 +22,19 @@ function boxMuller() {
 export function randSign() {
   return Math.random() > 0.5 ? 1 : -1
 }
+
+// Random hex string
+export function randHex(len) {
+  let codes = []
+  let zero = '0'.charCodeAt(0)
+  let a = 'a'.charCodeAt(0)
+  for (let i = 0; i < len; i++) {
+    let val = Math.floor(Math.random() * 16)
+    if (val < 10) {
+      codes.push(zero + val)
+    } else {
+      codes.push(a + val)
+    }
+  }
+  return String.fromCharCode(...codes)
+}

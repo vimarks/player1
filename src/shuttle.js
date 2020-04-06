@@ -1,4 +1,3 @@
-import Stage from 'stage-js/platform/web'
 import constants from './constants.js'
 import sounds from './sounds.js'
 import { Actions } from './actions.js'
@@ -43,6 +42,7 @@ export class Shuttle extends Moving {
 
   tick(dt, stage) {
     super.tick(dt, stage)
+    this.leave.on(side => this.onLeave(side))
 
     // Rotate the shuttle towards the focus point, unless already turning
     if (this.actions.focus && this.spin === 0) {

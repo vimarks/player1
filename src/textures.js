@@ -1,5 +1,3 @@
-import Stage from 'stage-js/platform/web'
-
 export default [
   {
     image: 'static/shuttle.png',

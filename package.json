@@ -3,13 +3,18 @@
   "version": "0.0.0",
   "description": "Spaceship Laboratory",
   "private": true,
-  "dependencies": {},
+  "dependencies": {
+    "automerge": "^0.14.0",
+    "ws": "^7.2.3"
+  },
   "devDependencies": {
     "@babel/core": "^7.9.0",
+    "@babel/node": "^7.8.7",
     "@babel/preset-env": "^7.9.0",
     "babel-jest": "^25.2.3",
     "babel-loader": "^8.1.0",
     "jest": "^25.2.3",
+    "nodemon": "^2.0.2",
     "prettier": "^2.0.1",
     "stage-js": "^0.8.11",
     "webpack": "^4.42.1",
@@ -20,7 +25,8 @@
     "test": "jest",
     "check": "prettier --check src",
     "build": "webpack",
-    "start": "webpack-dev-server --content-base dist --open -d"
+    "start": "webpack-dev-server --open -d",
+    "server": "nodemon -w src -x babel-node src/server/main.js"
   },
   "repository": {
     "type": "git",

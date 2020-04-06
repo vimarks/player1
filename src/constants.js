@@ -78,4 +78,7 @@ export default {
     fire: 750,
     focus: 100,
   },
+
+  // The WebSocket url of the server.
+  serverUrl: 'ws://localhost:8081',
 }

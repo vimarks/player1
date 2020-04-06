@@ -1,4 +1,5 @@
 import constants from './constants.js'
+import { Event } from './event.js'
 import { Node } from './node.js'
 import * as Trig from './trig.js'
 
@@ -20,6 +21,7 @@ export class Moving extends Node {
     this.velocityX = velocityX
     this.velocityY = velocityY
     this.spin = spin
+    this.leave = new Event()
   }
 
   /**
@@ -96,7 +98,7 @@ export class Moving extends Node {
 
   /**
    * Move the node based on its current velocity. If the node leaves the edge
-   * of the screen, calls the appropriate onLeave*() callback.
+   * of the screen, calls the leave event.
    */
   tick(dt, stage) {
     super.tick(dt, stage)
@@ -111,22 +113,14 @@ export class Moving extends Node {
     let rightEdge = this.getRightEdge(stage)
     let bottomEdge = this.getBottomEdge(stage)
     if (this.offsetX >= rightEdge) {
-      this.onLeave('right')
+      this.leave.emit('right')
     } else if (this.offsetX <= -rightEdge) {
-      this.onLeave('left')
+      this.leave.emit('left')
     }
     if (this.offsetY >= bottomEdge) {
-      this.onLeave('bottom')
+      this.leave.emit('bottom')
     } else if (this.offsetY <= -bottomEdge) {
-      this.onLeave('top')
+      this.leave.emit('top')
     }
-  }
-
-  /**
-   * Called when the node has moved completely off-screen, with the side of the
-   * screen where the node left ('top', 'bottom', 'left', 'right').
-   */
-  onLeave(side) {
-    // Override if needed
   }
 }
