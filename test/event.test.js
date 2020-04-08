@@ -1,7 +1,7 @@
-import { Event } from '../src/event.js'
+import { Event, STALE } from '../src/event.js'
 
 describe('Event', () => {
-  test('sends a full chain of callbacks', () => {
+  test('run a full chain of callbacks', () => {
     const start = new Event()
     const ev1 = new Event()
     const ev2 = new Event()
@@ -24,15 +24,26 @@ describe('Event', () => {
     ])
   })
 
-  test('trigger event only during function execution', () => {
+  test('run a callback only once', () => {
     const ev1 = new Event()
     const func = jest.fn()
 
-    ev1.during(function () {
-      expect(this).toBe(ev1)
-      this.emit('data1')
-      this.emit('data2')
-    }, func)
+    ev1.once(func)
+    ev1.emit('data1')
+    ev1.emit('data2')
+
+    expect(func.mock.calls).toEqual([['data1']])
+  })
+
+  test('run a callback until another event emits', () => {
+    const ev1 = new Event()
+    const ev2 = new Event()
+    const func = jest.fn()
+
+    ev1.until(ev2, func)
+    ev1.emit('data1')
+    ev1.emit('data2')
+    ev2.emit('stop')
     ev1.emit('data3')
 
     expect(func.mock.calls).toEqual([['data1'], ['data2']])

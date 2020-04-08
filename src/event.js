@@ -1,7 +1,3 @@
-function buildEventCallback(otherEvent, preArgs) {
-  return (...args) => otherEvent.emit(...preArgs, ...args)
-}
-
 /**
  * An object that represents something that happens during the course of a game.
  * When emitted, events call all registered callbacks.
@@ -9,6 +5,7 @@ function buildEventCallback(otherEvent, preArgs) {
 export class Event {
   constructor() {
     this.callbacks = new Set()
+    this.onceCallbacks = new WeakSet()
   }
 
   /**
@@ -20,31 +17,38 @@ export class Event {
   }
 
   /**
-   * Trigger another event when the event occurs.
+   * Register a callback to run only once when the event occurs.
    */
-  trigger(otherEvent, ...preArgs) {
-    return this.on(buildEventCallback(otherEvent, preArgs))
+  once(callback) {
+    this.onceCallbacks.add(callback)
+    return this.on(callback)
   }
 
   /**
-   * Execute the function, calling the callbacks if the event is emitted during
-   * execution.
+   * Trigger another event when the event occurs.
    */
-  during(execute, ...callbacks) {
-    callbacks.forEach(cb => this.callbacks.add(cb))
-    try {
-      execute.call(this)
-    } finally {
-      callbacks.forEach(cb => this.callbacks.delete(cb))
-    }
-    return this
+  trigger(otherEvent, ...preArgs) {
+    return this.on((...args) => otherEvent.emit(...preArgs, ...args))
+  }
+
+  /**
+   * Register a callback to run when the event occurs, but only until another
+   * event is triggered.
+   */
+  until(untilEvent, callback) {
+    untilEvent.once(() => this.callbacks.delete(callback))
+    return this.on(callback)
   }
 
   /**
    * Emit an occurrence of the event, with arguments.
    */
   emit(...args) {
-    this.callbacks.forEach(cb => cb(...args))
+    const onceCallbacks = this.onceCallbacks
+    this.callbacks.forEach(cb => {
+      if (onceCallbacks.has(cb)) this.callbacks.delete(cb)
+      cb(...args)
+    })
     return this
   }
 }

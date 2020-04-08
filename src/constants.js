@@ -80,5 +80,8 @@ export default {
   },
 
   // The WebSocket url of the server.
-  serverUrl: 'ws://localhost:8081',
+  serverUrl: process.env.SERVER_URL,
+
+  // Milliseconds until a game is ended after the last client disconnect.
+  serverGameExpiration: 10000,
 }

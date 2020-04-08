@@ -17,6 +17,9 @@ module.exports = {
     new webpack.ProvidePlugin({
       Stage: 'stage-js/platform/web',
     }),
+    new webpack.EnvironmentPlugin({
+      SERVER_URL: 'ws://localhost:8081',
+    }),
   ],
   devServer: {
     contentBase: 'dist',

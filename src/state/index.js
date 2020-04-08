@@ -1,8 +1,7 @@
-import Automerge from 'automerge'
 import { Rock } from '../rock.js'
 import { elapsed } from '../time.js'
 import { StateDoc } from './doc.js'
-import { Message } from './protocol.js'
+import { Connection } from './conn.js'
 import id from './id.js'
 
 /**
@@ -35,25 +34,15 @@ export class State {
   }
 
   start(stage) {
-    // Initialize the shared state doc
-    this.doc.initialize()
-
     // Connect to the server to synchronize state
     let ws = new WebSocket(`${this.url}?game=${id}`)
-    let sendMsg = merge => ws.send(JSON.stringify(new Message({ merge })))
-    let conn = new Automerge.Connection(this.doc.docSet, sendMsg)
-    let opened = false
-    ws.onmessage = event => {
-      const msg = Message.fromJSON(event.data)
-      this.doc.updated.during(
-        () => conn.receiveMsg(msg.merge),
-        doc => this.updateRocks(stage, msg.time, doc.rocks)
-      )
-      if (!opened) {
-        conn.open()
-        opened = true
-      }
-    }
-    ws.onclose = () => opened && conn.close()
+    let conn = new Connection()
+    conn.send.on(data => ws.send(JSON.stringify(data)))
+    ws.onmessage = event => conn.recv.emit(JSON.parse(event.data))
+    ws.onclose = () => conn.close.emit()
+    ws.onopen = () => this.doc.sync(conn)
+
+    // Handle shared state updates
+    this.doc.updated.on((when, doc) => this.updateRocks(stage, when, doc.rocks))
   }
 }

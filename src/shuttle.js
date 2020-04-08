@@ -23,6 +23,7 @@ export class Shuttle extends Moving {
 
   start(stage) {
     super.start(stage)
+    this.leave.on(side => this.onLeave(side))
 
     // Listen for actions we care about
     this.actions.start(stage)
@@ -42,7 +43,6 @@ export class Shuttle extends Moving {
 
   tick(dt, stage) {
     super.tick(dt, stage)
-    this.leave.on(side => this.onLeave(side))
 
     // Rotate the shuttle towards the focus point, unless already turning
     if (this.actions.focus && this.spin === 0) {
