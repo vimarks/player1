@@ -1,4 +1,4 @@
-import { Event, STALE } from '../src/event.js'
+import { Event } from '../src/event.js'
 
 describe('Event', () => {
   test('run a full chain of callbacks', () => {

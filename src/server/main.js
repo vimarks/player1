@@ -3,9 +3,8 @@ import WebSocket from 'ws'
 import { Game } from './game.js'
 import { Connection } from '../state/conn.js'
 
-const wss = new WebSocket.Server({
-  port: process.env.PORT || 8081,
-})
+const port = process.env.PORT || 8081
+const wss = new WebSocket.Server({ port })
 
 // A map of game ID -> Game, so clients can join existing games
 const games = new Map()
@@ -47,6 +46,7 @@ wss.on('connection', (ws, req) => {
 
 // Constantly send ping requests to every client
 wss.on('listening', () => {
+  console.log('listening on', port)
   const interval = setInterval(() => {
     wss.clients.forEach(ws => ws.ping())
   }, 500)
