@@ -1,29 +1,33 @@
+import shuttleImage from '../static/shuttle.png'
+import bulletImage from '../static/laser-blue.png'
+import asteroidImage from '../static/asteroid-brown.png'
+import explosionSheet from '../static/explosionSpriteSheet.png'
+import crystalSheet from '../static/crystalSpriteSheet.png'
+
 export default [
   {
-    image: 'static/shuttle.png',
+    image: shuttleImage,
     textures: {
       shuttle: { x: 0, y: 0, width: 52, height: 52 },
     },
   },
 
   {
-    image: 'static/laser-blue.png',
+    image: bulletImage,
     textures: {
       bullet: { x: 0, y: 0, width: 15, height: 30 },
     },
   },
 
   {
-    image: 'static/asteroid-brown.png',
+    image: asteroidImage,
     textures: {
       rock: { x: 0, y: 0, width: 64, height: 64 },
     },
   },
 
   {
-    image: {
-      src: 'static/explosionSpriteSheet.png',
-    },
+    image: explosionSheet,
     textures: {
       explosion: [
         { x: 0, y: 0, width: 52, height: 52 },
@@ -42,9 +46,7 @@ export default [
     },
   },
   {
-    image: {
-      src: 'static/crystalSpriteSheet.png',
-    },
+    image: crystalSheet,
     textures: {
       crystal: buildTexture(36, 5, 50, 90),
     },

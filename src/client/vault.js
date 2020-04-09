@@ -1,6 +1,5 @@
-import Stage from 'stage-js/platform/web'
+import { Event } from '../event.js'
 import { Node } from './node.js'
-import { Event } from './event.js'
 
 export class Vault extends Node {
   constructor(balance) {

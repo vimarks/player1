@@ -1,5 +1,5 @@
+import { Event } from '../event.js'
 import { Node } from './node.js'
-import { Event } from './event.js'
 
 export class Timer extends Node {
   constructor(timeLimit) {

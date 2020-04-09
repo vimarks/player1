@@ -33,7 +33,7 @@ export function randHex(len) {
     if (val < 10) {
       codes.push(zero + val)
     } else {
-      codes.push(a + val)
+      codes.push(a + val - 10)
     }
   }
   return String.fromCharCode(...codes)

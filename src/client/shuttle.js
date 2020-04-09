@@ -1,10 +1,10 @@
-import constants from './constants.js'
+import constants from '../constants.js'
+import * as Trig from '../trig.js'
 import sounds from './sounds.js'
 import { Actions } from './actions.js'
 import { Bullet } from './bullet.js'
 import { Moving } from './moving.js'
 import { Node } from './node.js'
-import * as Trig from './trig.js'
 
 export class Shuttle extends Moving {
   constructor(source) {
@@ -23,6 +23,7 @@ export class Shuttle extends Moving {
 
   start(stage) {
     super.start(stage)
+    this.leave.on(side => this.onLeave(side))
 
     // Listen for actions we care about
     this.actions.start(stage)
@@ -42,7 +43,6 @@ export class Shuttle extends Moving {
 
   tick(dt, stage) {
     super.tick(dt, stage)
-    this.leave.on(side => this.onLeave(side))
 
     // Rotate the shuttle towards the focus point, unless already turning
     if (this.actions.focus && this.spin === 0) {

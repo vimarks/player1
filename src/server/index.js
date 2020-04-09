@@ -1,21 +1,10 @@
 import { strict as assert } from 'assert'
-import Automerge from 'automerge'
 import WebSocket from 'ws'
-import constants from '../constants.js'
-import { elapsed } from '../time.js'
 import { Game } from './game.js'
-import { Message } from '../state/protocol.js'
+import { Connection } from '../conn.js'
 
-const wss = new WebSocket.Server({
-  port: process.env.PORT || 8081,
-})
-
-// Mimicks the methods we need on the `stage` object
-const stage = {
-  first: () => stage,
-  width: () => constants.viewbox.width,
-  height: () => constants.viewbox.height,
-}
+const port = process.env.PORT || 8081
+const wss = new WebSocket.Server({ port })
 
 // A map of game ID -> Game, so clients can join existing games
 const games = new Map()
@@ -34,26 +23,30 @@ wss.on('connection', (ws, req) => {
   if (!games.has(gameId)) {
     // New game ID, start a new game
     const newGame = new Game()
-    newGame.start(stage)
     games.set(gameId, newGame)
+    newGame.start()
+    console.log('starting game', gameId)
   }
   const game = games.get(gameId)
 
   // Use the websocket to synchronize the state docs
-  const sendMsg = merge => ws.send(JSON.stringify(new Message({ merge })))
-  const conn = new Automerge.Connection(game.doc.docSet, sendMsg)
-  ws.on('close', () => conn.close())
-  ws.on('message', data => {
-    const msg = Message.fromJSON(data)
-    if (msg.merge) {
-      conn.receiveMsg(msg.merge)
-    }
+  const conn = new Connection()
+  conn.send.on(data => ws.send(JSON.stringify(data)))
+  ws.on('message', data => conn.recv.emit(JSON.parse(data)))
+  ws.on('close', () => conn.close.emit())
+  game.join.emit(conn)
+  conn.close.trigger(game.leave, conn)
+
+  // Remove the game on end
+  game.end.on(() => {
+    console.log('ending game', gameId)
+    games.delete(gameId)
   })
-  conn.open()
 })
 
 // Constantly send ping requests to every client
 wss.on('listening', () => {
+  console.log('listening on', port)
   const interval = setInterval(() => {
     wss.clients.forEach(ws => ws.ping())
   }, 500)

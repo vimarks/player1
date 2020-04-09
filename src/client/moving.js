@@ -1,7 +1,7 @@
-import constants from './constants.js'
-import { Event } from './event.js'
+import constants from '../constants.js'
+import * as Trig from '../trig.js'
+import { Event } from '../event.js'
 import { Node } from './node.js'
-import * as Trig from './trig.js'
 
 /**
  * Base class extending Node with the ability to move around the screen.

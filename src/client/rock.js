@@ -1,7 +1,7 @@
-import constants from './constants.js'
-import { Event } from './event.js'
+import constants from '../constants.js'
+import { randRange } from '../rand.js'
+import { Event } from '../event.js'
 import { Moving } from './moving.js'
-import { randRange } from './rand.js'
 
 export class Rock extends Moving {
   constructor({ side, offsetX, offsetY, scale, velocityX, velocityY }) {

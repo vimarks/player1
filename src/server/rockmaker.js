@@ -4,8 +4,7 @@ import { randRange, randNormal, randSign } from '../rand.js'
 import { elapsed } from '../time.js'
 
 export class RockMaker {
-  constructor(startTime) {
-    this.startTime = startTime
+  constructor() {
     this.numRocksStart = 10
     this.rocksPct = 0.6
     this.newRock = new Event()
@@ -51,7 +50,7 @@ export class RockMaker {
       }
     }
 
-    let when = elapsed(this.startTime)
+    let when = elapsed()
     return { when, side, offsetX, offsetY, scale, velocityX, velocityY }
   }
 }
