@@ -1,7 +1,7 @@
 import constants from '../constants.js'
 import { Event } from '../event.js'
 import { elapsed } from '../time.js'
-import { StateDoc } from '../state/doc.js'
+import { StateDoc } from '../doc.js'
 import { RockMaker } from './rockmaker.js'
 
 // Mimicks the methods we need on the `stage` object

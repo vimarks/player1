@@ -1,6 +1,6 @@
-import constants from './constants.js'
+import constants from '../constants.js'
+import * as Trig from '../trig.js'
 import { Moving } from './moving.js'
-import * as Trig from './trig.js'
 
 export class Bullet extends Moving {
   constructor(offsetX, offsetY, rotation, velocityX, velocityY) {

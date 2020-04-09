@@ -1,8 +1,8 @@
-import { Rock } from '../rock.js'
 import { elapsed } from '../time.js'
-import { StateDoc } from './doc.js'
-import { Connection } from './conn.js'
+import { StateDoc } from '../doc.js'
+import { Connection } from '../conn.js'
 import id from './id.js'
+import { Rock } from './rock.js'
 
 /**
  * Manage the game state that is synchronized with the server.

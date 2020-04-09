@@ -1,5 +1,5 @@
-import * as Trig from './trig.js'
-import { Event } from './event.js'
+import * as Trig from '../trig.js'
+import { Event } from '../event.js'
 
 /**
  * Base class of anything that is drawn on the screen. The node

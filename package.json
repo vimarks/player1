@@ -13,20 +13,24 @@
     "@babel/preset-env": "^7.9.0",
     "babel-jest": "^25.2.3",
     "babel-loader": "^8.1.0",
+    "clean-webpack-plugin": "^3.0.0",
+    "file-loader": "^6.0.0",
+    "html-webpack-plugin": "^4.0.4",
     "jest": "^25.2.3",
     "nodemon": "^2.0.2",
     "prettier": "^2.0.1",
     "stage-js": "^0.8.11",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.10.3"
+    "webpack-dev-server": "^3.10.3",
+    "webpack-node-externals": "^1.7.2"
   },
   "scripts": {
     "test": "jest",
     "check": "prettier --check src",
-    "build": "webpack",
+    "build": "webpack -p --mode production",
     "start": "webpack-dev-server --open -d",
-    "server": "nodemon -w src -x babel-node src/server/main.js"
+    "server": "nodemon -w src -x babel-node src/server/index.js"
   },
   "repository": {
     "type": "git",
@@ -37,5 +41,9 @@
   "bugs": {
     "url": "https://github.com/vimarks/player1/issues"
   },
-  "homepage": "https://github.com/vimarks/player1#readme"
+  "homepage": "https://github.com/vimarks/player1#readme",
+  "optionalDependencies": {
+    "bufferutil": "^4.0.1",
+    "utf-8-validate": "^5.0.2"
+  }
 }

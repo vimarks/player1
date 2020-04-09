@@ -1,7 +1,7 @@
 import { strict as assert } from 'assert'
 import WebSocket from 'ws'
 import { Game } from './game.js'
-import { Connection } from '../state/conn.js'
+import { Connection } from '../conn.js'
 
 const port = process.env.PORT || 8081
 const wss = new WebSocket.Server({ port })

@@ -1,8 +1,7 @@
-import Stage from 'stage-js/platform/web'
-import constants from './constants.js'
+import constants from '../constants.js'
+import { randRange } from '../rand.js'
 import sounds from './sounds.js'
 import { Moving } from './moving.js'
-import { randRange } from './rand.js'
 
 export class CrystalMaker {
   constructor() {

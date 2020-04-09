@@ -1,5 +1,5 @@
 import Automerge from 'automerge'
-import { Event } from '../event.js'
+import { Event } from './event.js'
 import { Message } from './conn.js'
 
 /**

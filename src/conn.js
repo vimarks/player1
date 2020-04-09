@@ -1,5 +1,5 @@
-import { Event } from '../event.js'
-import { elapsed } from '../time.js'
+import { Event } from './event.js'
+import { elapsed } from './time.js'
 
 /**
  * A single message sent from client to server or server to client.

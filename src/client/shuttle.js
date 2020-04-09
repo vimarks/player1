@@ -1,10 +1,10 @@
-import constants from './constants.js'
+import constants from '../constants.js'
+import * as Trig from '../trig.js'
 import sounds from './sounds.js'
 import { Actions } from './actions.js'
 import { Bullet } from './bullet.js'
 import { Moving } from './moving.js'
 import { Node } from './node.js'
-import * as Trig from './trig.js'
 
 export class Shuttle extends Moving {
   constructor(source) {

@@ -1,5 +1,5 @@
-import * as Trig from './trig.js'
-import { Event } from './event.js'
+import * as Trig from '../trig.js'
+import { Event } from '../event.js'
 
 /**
  * A collision "group", where every node in the left set is checked against
