@@ -5,8 +5,6 @@ import { elapsed } from '../time.js'
 
 export class RockMaker {
   constructor() {
-    this.numRocksStart = 10
-    this.rocksPct = 0.6
     this.newRock = new Event()
   }
 
