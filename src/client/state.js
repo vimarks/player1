@@ -3,6 +3,7 @@ import { StateDoc } from '../doc.js'
 import { Connection } from '../conn.js'
 import id from './id.js'
 import { Rock } from './rock.js'
+import { Crystal } from './crystal.js'
 
 /**
  * Manage the game state that is synchronized with the server.
@@ -12,6 +13,7 @@ export class State {
     this.url = url
     this.doc = new StateDoc()
     this.rockMap = new Map()
+    this.crystalMap = new Map()
   }
 
   /**
@@ -33,6 +35,25 @@ export class State {
     })
   }
 
+  /**
+   * Check for crystals that have not yet been written to the screen.
+   */
+  updateCrystals(stage, when, crystals) {
+    crystals.rows.forEach(data => {
+      let existing = this.crystalMap.get(data.id)
+      if (!existing) {
+        let crystal = new Crystal(data)
+        let age = when - data.when
+        this.crystalMap.set(data.id, crystal)
+        crystal.leave
+          .on(() => this.rockMap.delete(data.id))
+          .on(() => this.doc.remove(doc => doc.rocks, data.id))
+        crystal.start(stage)
+        crystal.tick(age, stage)
+      }
+    })
+  }
+
   start(stage) {
     // Connect to the server to synchronize state
     let ws = new WebSocket(`${this.url}?game=${id}`)
@@ -44,5 +65,8 @@ export class State {
 
     // Handle shared state updates
     this.doc.updated.on((when, doc) => this.updateRocks(stage, when, doc.rocks))
+    this.doc.updated.on((when, doc) =>
+      this.updateCrystals(stage, when, doc.crystals)
+    )
   }
 }

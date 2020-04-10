@@ -3,35 +3,8 @@ import { randRange } from '../rand.js'
 import sounds from './sounds.js'
 import { Moving } from './moving.js'
 
-export class CrystalMaker {
-  constructor() {
-    this.crystalSet = new Set()
-  }
-
-  start(stage) {
-    setInterval(() => this.maybeMakeCrystals(stage), 2000)
-  }
-
-  maybeMakeCrystals(stage) {
-    if (Math.random() < constants.newCrystalChance) {
-      let crystal = this.makeCrystal(stage)
-      this.crystalSet.add(crystal)
-      crystal.remove.on(() => this.crystalSet.delete(crystal))
-      crystal.start(stage)
-      sounds.crystalSpawn.emit()
-    }
-  }
-
-  makeCrystal(stage) {
-    let offsetX = randRange(-stage.width() / 2, stage.width() / 2)
-    let offsetY = randRange(-stage.height() / 2, stage.height() / 2)
-
-    return new Crystal(offsetX, offsetY)
-  }
-}
-
-class Crystal extends Moving {
-  constructor(offsetX, offsetY) {
+export class Crystal extends Moving {
+  constructor({ offsetX, offsetY }) {
     let node = Stage.anim('crystal')
     super(node, offsetX, offsetY)
   }
