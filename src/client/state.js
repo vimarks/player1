@@ -46,8 +46,8 @@ export class State {
         let age = when - data.when
         this.crystalMap.set(data.id, crystal)
         crystal.leave
-          .on(() => this.rockMap.delete(data.id))
-          .on(() => this.doc.remove(doc => doc.rocks, data.id))
+          .on(() => this.crystalMap.delete(data.id))
+          .on(() => this.doc.remove(doc => doc.crystals, data.id))
         crystal.start(stage)
         crystal.tick(age, stage)
       }
