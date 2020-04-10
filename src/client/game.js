@@ -6,7 +6,6 @@ import { Input } from './input.js'
 import { State } from './state.js'
 import { Collisions } from './collision.js'
 import { Shuttle } from './shuttle.js'
-import { CrystalMaker } from './crystal.js'
 import { Timer } from './timer.js'
 import { Vault } from './vault.js'
 
@@ -25,7 +24,6 @@ export class Game extends Node {
 
     let input = new Input()
     let collisions = new Collisions()
-    let crystalMaker = new CrystalMaker()
     let timer = new Timer(constants.initTimeLimit)
     let vault = new Vault(constants.initBalance)
     let shuttle = new Shuttle(input.source)
@@ -34,7 +32,6 @@ export class Game extends Node {
 
     // Initialize game mechanics
     input.start(stage)
-    crystalMaker.start(stage)
     timer.start(stage)
     vault.start(stage)
     collisions.start(stage)
@@ -60,7 +57,7 @@ export class Game extends Node {
       .triggerRight(bullet => bullet.remove)
 
     collisions
-      .detect([shuttle], crystalMaker.crystalSet)
+      .detect([shuttle], state.crystalMap)
       .trigger(timer.extendTimer)
       .trigger(vault.bankCrystal)
       .trigger(sounds.crystalCapture)

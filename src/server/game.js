@@ -3,6 +3,7 @@ import { Event } from '../event.js'
 import { elapsed } from '../time.js'
 import { StateDoc } from '../doc.js'
 import { RockMaker } from './rockmaker.js'
+import { CrystalMaker } from './crystalmaker.js'
 
 // Mimicks the methods we need on the `stage` object
 const stage = {
@@ -47,8 +48,16 @@ export class Game {
     const rockMaker = new RockMaker()
     rockMaker.start(stage)
     rockMaker.newRock.on(rock => {
-      // Push new rocks into the static doc
+      // Push new rocks into the state doc
       this.doc.change(doc => doc.rocks.add(rock))
+    })
+
+    // Begin generating crystals
+    const crystalMaker = new CrystalMaker()
+    crystalMaker.start(stage)
+    crystalMaker.newCrystal.on(rock => {
+      // Push new crystal into the state doc
+      this.doc.change(doc => doc.crystals.add(crystal))
     })
   }
 }
