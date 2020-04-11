@@ -16,7 +16,6 @@ export class CrystalMaker {
     if (Math.random() < constants.newCrystalChance) {
       let crystal = this.makeCrystal(stage)
       this.newCrystal.emit(crystal)
-      sounds.crystalSpawn.emit()
     }
   }
 

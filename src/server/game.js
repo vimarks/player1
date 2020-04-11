@@ -48,8 +48,8 @@ export class Game {
     const rockMaker = new RockMaker()
     rockMaker.start(stage)
     rockMaker.newRock.on(rock => {
-      // Push new rocks into the state doc
-      this.doc.change(doc => doc.rocks.add(rock))
+      // Push new rock into the state doc
+      this.doc.rocks.add(rock)
     })
 
     // Begin generating crystals
@@ -57,7 +57,7 @@ export class Game {
     crystalMaker.start(stage)
     crystalMaker.newCrystal.on(crystal => {
       // Push new crystal into the state doc
-      this.doc.change(doc => doc.crystals.add(crystal))
+      this.doc.crystals.add(crystal)
     })
   }
 }
