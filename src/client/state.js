@@ -12,46 +12,8 @@ export class State {
   constructor(url) {
     this.url = url
     this.doc = new StateDoc()
-    this.rockMap = new Map()
-    this.crystalMap = new Map()
-  }
-
-  /**
-   * Check for rocks that have not yet been written to the screen.
-   */
-  updateRocks(stage, when, rocks) {
-    rocks.rows.forEach(data => {
-      let existing = this.rockMap.get(data.id)
-      if (!existing) {
-        let rock = new Rock(data)
-        let age = when - data.when
-        this.rockMap.set(data.id, rock)
-        rock.leave
-          .on(() => this.rockMap.delete(data.id))
-          .on(() => this.doc.remove(doc => doc.rocks, data.id))
-        rock.start(stage)
-        rock.tick(age, stage)
-      }
-    })
-  }
-
-  /**
-   * Check for crystals that have not yet been written to the screen.
-   */
-  updateCrystals(stage, when, crystals) {
-    crystals.rows.forEach(data => {
-      let existing = this.crystalMap.get(data.id)
-      if (!existing) {
-        let crystal = new Crystal(data)
-        let age = when - data.when
-        this.crystalMap.set(data.id, crystal)
-        crystal.leave
-          .on(() => this.crystalMap.delete(data.id))
-          .on(() => this.doc.remove(doc => doc.crystals, data.id))
-        crystal.start(stage)
-        crystal.tick(age, stage)
-      }
-    })
+    this.rockSet = new NodeSet(this.doc.rocks, Rock.add)
+    this.crystalSet = new NodeSet(this.doc.crystals, Crystal.add)
   }
 
   start(stage) {
@@ -64,9 +26,45 @@ export class State {
     ws.onopen = () => this.doc.sync(conn)
 
     // Handle shared state updates
-    this.doc.updated.on((when, doc) => this.updateRocks(stage, when, doc.rocks))
-    this.doc.updated.on((when, doc) =>
-      this.updateCrystals(stage, when, doc.crystals)
-    )
+    this.doc.start(stage)
+    this.rockSet.start(stage)
+    this.crystalSet.start(stage)
+  }
+}
+
+/**
+ * Manages a set of nodes that are synced with a table on the server.
+ */
+class NodeSet {
+  constructor(table, add) {
+    this.table = table
+    this.add = add
+    this.map = new Map()
+  }
+
+  start(stage) {
+    this.table.updated.on((op, id, data, when) => {
+      if (op === 'add') {
+        // Add a new node from the table to the set
+        const newNode = this.add(stage, data, when)
+        this.map.set(id, newNode)
+        newNode.sync.on(() => {
+          this.table.update(id, row => newNode.save(stage, row))
+        })
+      } else if (op === 'update') {
+        // Load updates from the table into the node
+        const node = this.map.get(id)
+        node.load(stage, data, when)
+      } else if (op === 'remove') {
+        // Remove the node from the set
+        const node = this.map.get(id)
+        node.remove.emit()
+        this.map.delete(id)
+      }
+    })
+  }
+
+  values() {
+    return this.map.values()
   }
 }

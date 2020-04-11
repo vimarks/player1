@@ -1,7 +1,6 @@
 import constants from '../constants.js'
 import { Event } from '../event.js'
 import { randRange, randNormal, randSign } from '../rand.js'
-import { elapsed } from '../time.js'
 
 export class RockMaker {
   constructor() {
@@ -48,7 +47,6 @@ export class RockMaker {
       }
     }
 
-    let when = elapsed()
-    return { when, side, offsetX, offsetY, scale, velocityX, velocityY }
+    return { side, offsetX, offsetY, scale, velocityX, velocityY }
   }
 }

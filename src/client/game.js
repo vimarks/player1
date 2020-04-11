@@ -47,17 +47,17 @@ export class Game extends Node {
     timer.expire.trigger(gameOver)
 
     collisions
-      .detect([shuttle], state.rockMap)
+      .detect([shuttle], state.rockSet)
       .trigger(sounds.explosion)
       .trigger(gameOver)
 
     collisions
-      .detect(state.rockMap, shuttle.bulletSet)
+      .detect(state.rockSet, shuttle.bulletSet)
       .triggerLeft(rock => rock.shoot)
       .triggerRight(bullet => bullet.remove)
 
     collisions
-      .detect([shuttle], state.crystalMap)
+      .detect([shuttle], state.crystalSet)
       .trigger(timer.extendTimer)
       .trigger(vault.bankCrystal)
       .trigger(sounds.crystalCapture)

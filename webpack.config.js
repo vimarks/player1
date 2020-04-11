@@ -30,7 +30,7 @@ module.exports = [
     entry: './client',
     output: {
       path: clientPath,
-      publicPath: '/player1/',
+      publicPath: process.env.PUBLIC_PATH || '/',
       filename: '[name].[contenthash].js',
     },
     module: { rules },
