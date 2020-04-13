@@ -34,6 +34,7 @@ export class Rock extends Moving {
   load(stage, data, when) {
     super.load(stage, data, when)
     // Load the position and velocity from the saved data
+    let rock = new Rock(data)
     let age = when - data.mod
     this.moveTo(data.offsetX, data.offsetY)
     this.velocityX = data.velocityX

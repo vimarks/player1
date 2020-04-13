@@ -105,7 +105,7 @@ class Table {
     const row = this.rows.get(id)
     const saved = handler(row)
     saved.mod = elapsed()
-    Object.assign(existing, saved)
+    Object.assign(row, saved)
     this.updated.emit('update', id, saved)
   }
 
