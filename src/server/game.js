@@ -25,9 +25,6 @@ export class Game {
   }
 
   start() {
-    // Initialize the shared state doc
-    this.doc.initialize()
-
     // Keep track of game connections
     const connections = new Set()
     let endTimeout = null

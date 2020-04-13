@@ -1,7 +1,7 @@
 import { strict as assert } from 'assert'
 import WebSocket from 'ws'
 import { Game } from './game.js'
-import { Connection } from '../conn.js'
+import { Message, Connection } from '../conn.js'
 
 const port = process.env.PORT || 8081
 const wss = new WebSocket.Server({ port })
@@ -31,8 +31,8 @@ wss.on('connection', (ws, req) => {
 
   // Use the websocket to synchronize the state docs
   const conn = new Connection()
-  conn.send.on(data => ws.send(JSON.stringify(data)))
-  ws.on('message', data => conn.recv.emit(JSON.parse(data)))
+  conn.send.on(data => ws.send(JSON.stringify(new Message(data))))
+  ws.on('message', data => conn.recv.emit(new Message(JSON.parse(data))))
   ws.on('close', () => conn.close.emit())
   game.join.emit(conn)
   conn.close.trigger(game.leave, conn)

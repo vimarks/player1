@@ -11,7 +11,6 @@ export class Rock extends Moving {
     super(node, offsetX, offsetY, rotation, scale, velocityX, velocityY, spin)
     this.side = side
     this.shoot = new Event()
-    this.sync = new Event()
   }
 
   static add(stage, data, when) {
@@ -22,14 +21,24 @@ export class Rock extends Moving {
     return rock
   }
 
-  save(stage, data) {
-    data.velocityX = this.velocityX
-    data.velocityY = this.velocityY
+  save(stage, prev) {
+    let saved = super.save(stage, prev)
+    // Save the position and velocity, in case the rock was ricocheted
+    saved.offsetX = this.offsetX
+    saved.offsetY = this.offsetY
+    saved.velocityX = this.velocityX
+    saved.velocityY = this.velocityY
+    return saved
   }
 
   load(stage, data, when) {
+    super.load(stage, data, when)
+    // Load the position and velocity from the saved data
+    let age = when - data.mod
+    this.moveTo(data.offsetX, data.offsetY)
     this.velocityX = data.velocityX
     this.velocityY = data.velocityY
+    rock.tick(age, stage)
   }
 
   start(stage) {

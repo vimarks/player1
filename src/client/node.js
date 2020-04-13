@@ -13,6 +13,7 @@ export class Node {
     this.rotation = rotation
     this.scale = scale
     this.remove = new Event()
+    this.sync = new Event()
   }
 
   append(stage) {
@@ -106,5 +107,19 @@ export class Node {
   scaleTo(newScale) {
     this.scale = newScale
     this.node.pin('scale', newScale)
+  }
+
+  /**
+   * Save updated state from the node.
+   */
+  save(stage, prev) {
+    return {} // Nothing to save
+  }
+
+  /**
+   * Load updated state from a prior save() call.
+   */
+  load(stage, saved, when) {
+    // Nothing to load
   }
 }

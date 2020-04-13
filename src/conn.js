@@ -5,13 +5,9 @@ import { elapsed } from './time.js'
  * A single message sent from client to server or server to client.
  */
 export class Message {
-  constructor({ when = elapsed(), changes }) {
+  constructor({ when = elapsed(), changes = [] }) {
     this.when = when
     this.changes = changes
-  }
-
-  static fromJSON(str) {
-    return new Message(JSON.parse(str))
   }
 }
 
