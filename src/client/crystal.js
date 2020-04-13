@@ -8,7 +8,6 @@ export class Crystal extends Moving {
   constructor({ offsetX, offsetY }) {
     let node = Stage.anim('crystal')
     super(node, offsetX, offsetY)
-    this.sync = new Event()
   }
 
   static add(stage, data, when) {
@@ -18,14 +17,6 @@ export class Crystal extends Moving {
     crystal.tick(age, stage)
     sounds.crystalSpawn.emit()
     return crystal
-  }
-
-  save(stage, data) {
-    // Nothing to save
-  }
-
-  load(stage, data, when) {
-    // Nothing to load
   }
 
   start(stage) {

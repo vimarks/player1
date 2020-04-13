@@ -1,153 +1,120 @@
-import Automerge from 'automerge'
 import { Event } from './event.js'
-import { Message } from './conn.js'
 import { elapsed } from './time.js'
+import { randHex } from './rand.js'
+
+// The types that are kept in the shared game state
+export const TYPES = ['rocks', 'crystals']
 
 /**
  * Keeps the shared game state.
  */
 export class StateDoc {
   constructor() {
-    this.doc = this.initial = Automerge.init()
-    this.changed = new Event()
-    this.updated = new Event()
-    this.rocks = new Table(this, doc => doc.rocks)
-    this.crystals = new Table(this, doc => doc.crystals)
+    // Add a new property for each type
+    for (const type of TYPES) {
+      this[type] = new Table(this, type)
+    }
   }
 
-  initialize() {
-    // Create tables and counters for all synced state
-    this.doc = Automerge.change(this.doc, doc => {
-      doc.rocks = new Automerge.Table()
-      doc.crystals = new Automerge.Table()
-    })
-  }
-
-  start(stage) {
-    this.rocks.start(stage)
-    this.crystals.start(stage)
+  /**
+   * Iterate through each (type, table) combo.
+   */
+  forEach(handler) {
+    for (const type of TYPES) {
+      handler(type, this[type])
+    }
   }
 
   /**
    * Synchronize the doc over the given connection.
    */
   sync(conn) {
-    let connDoc = this.initial
-
     // Send document changes on the socket until it closes
-    this.changed.until(conn.close, () => {
-      const changes = Automerge.getChanges(connDoc, this.doc)
-      connDoc = this.doc
-      if (changes.length > 0) conn.send.emit(new Message({ changes }))
+    this.forEach((type, table) => {
+      table.updated.until(conn.close, (op, id, row, when, source) => {
+        if (conn !== source) {
+          const changes = [{ type, id, row }]
+          conn.send.emit({ when, changes })
+        }
+      })
     })
 
     // Receive document changes from the socket
     conn.recv.on(msg => {
-      if (msg.changes) {
-        const newDoc = Automerge.applyChanges(this.doc, msg.changes)
-        this.doc = newDoc
-        this.updated.emit(msg.when, newDoc)
+      const when = msg.when
+      if (msg.changes.length > 0) {
+        msg.changes.forEach(({ type, id, row }) => {
+          this[type].apply(id, row, when, conn)
+        })
       }
     })
 
-    // Send all changes since doc creation
-    this.changed.emit()
-  }
-
-  /**
-   * Change the shared state.
-   */
-  change(handler) {
-    const oldDoc = this.doc
-    const newDoc = Automerge.change(oldDoc, handler)
-    this.doc = newDoc
-    this.changed.emit()
+    // Send all tables as changes
+    const changes = []
+    this.forEach((type, table) => {
+      table.rows.forEach((row, id) => changes.push({ type, id, row }))
+    })
+    conn.send.emit({ changes })
   }
 }
 
 /**
- * Manages operations against a specific table.
+ * Manages a table containing the records for a type.
  */
 class Table {
-  constructor(doc, getTable) {
+  constructor(doc, type) {
     this.doc = doc
-    this.getTable = getTable
+    this.type = type
+    this.rows = new Map()
     this.updated = new Event()
-    this.cache = new Map()
-  }
-
-  start(stage) {
-    const cache = this.cache
-    const updated = this.updated
-
-    this.doc.updated.on((when, doc) => {
-      const table = this.getTable(doc)
-      const unseen = new Set(cache.keys())
-
-      // Iterate through the table to check for updates
-      table.rows.forEach(row => {
-        const id = Automerge.getObjectId(row)
-        const seq = row.seq.value
-
-        if (!unseen.delete(id)) {
-          // Row did not exist in cache, it is newly added
-          updated.emit('add', id, row, when)
-        } else if (seq !== cache.get(id)) {
-          // Row modification sequence is different from cache, it is updated
-          updated.emit('update', id, row, when)
-        }
-
-        // Update the cache
-        cache.set(id, seq)
-      })
-
-      // All unseen cache rows after a pass through the table were removed
-      unseen.forEach(id => {
-        updated.emit('remove', id, null, when)
-        cache.delete(id)
-      })
-    })
   }
 
   /**
-   * Add an object to a table.
+   * Apply a change to a row.
    */
-  add(data) {
-    this.doc.change(doc => {
-      const table = this.getTable(doc)
-      const id = table.add({
-        seq: new Automerge.Counter(),
-        mod: elapsed(),
-        ...data,
-      })
-      this.cache.set(id, 0)
-    })
+  apply(id, row, when, source) {
+    const existing = this.rows.get(id)
+    if (row) {
+      if (existing) {
+        Object.assign(existing, row)
+        this.updated.emit('update', id, row, when, source)
+      } else {
+        this.rows.set(id, row)
+        this.updated.emit('add', id, row, when, source)
+      }
+    } else if (existing) {
+      this.rows.delete(id)
+      this.updated.emit('remove', id, row, when, source)
+    }
   }
 
   /**
-   * Update an object in a table.
+   * Add a row to the table.
+   */
+  add(row) {
+    const id = randHex(16)
+    row.mod = elapsed()
+    this.rows.set(id, row)
+    this.updated.emit('add', id, row)
+  }
+
+  /**
+   * Update an existing row in the table.
    */
   update(id, handler) {
-    this.doc.change(doc => {
-      const table = this.getTable(doc)
-      const row = table.byId(id)
-      const seq = row.seq.increment()
-      row.mod = elapsed()
-      handler(row)
-      this.cache.set(id, seq)
-    })
+    const row = this.rows.get(id)
+    const saved = handler(row)
+    saved.mod = elapsed()
+    Object.assign(existing, saved)
+    this.updated.emit('update', id, saved)
   }
 
   /**
-   * Remove an id from a table in the shared state, ignoring race errors.
+   * Remove an existing row in the table.
    */
   remove(id) {
-    this.doc.change(doc => {
-      const table = this.getTable(doc)
-      this.cache.delete(id)
-      try {
-        table.remove(id)
-      } catch (err) {}
-    })
+    if (this.rows.delete(id)) {
+      this.updated.emit('remove', id, null)
+    }
   }
 }

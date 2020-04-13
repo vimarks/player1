@@ -4,7 +4,6 @@
   "description": "Spaceship Laboratory",
   "private": true,
   "dependencies": {
-    "automerge": "^0.14.0",
     "ws": "^7.2.3"
   },
   "devDependencies": {

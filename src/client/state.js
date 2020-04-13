@@ -1,6 +1,6 @@
 import { elapsed } from '../time.js'
 import { StateDoc } from '../doc.js'
-import { Connection } from '../conn.js'
+import { Message, Connection } from '../conn.js'
 import id from './id.js'
 import { Rock } from './rock.js'
 import { Crystal } from './crystal.js'
@@ -20,13 +20,12 @@ export class State {
     // Connect to the server to synchronize state
     let ws = new WebSocket(`${this.url}?game=${id}`)
     let conn = new Connection()
-    conn.send.on(data => ws.send(JSON.stringify(data)))
-    ws.onmessage = event => conn.recv.emit(JSON.parse(event.data))
+    conn.send.on(data => ws.send(JSON.stringify(new Message(data))))
+    ws.onmessage = event => conn.recv.emit(new Message(JSON.parse(event.data)))
     ws.onclose = () => conn.close.emit()
     ws.onopen = () => this.doc.sync(conn)
 
     // Handle shared state updates
-    this.doc.start(stage)
     this.rockSet.start(stage)
     this.crystalSet.start(stage)
   }
@@ -43,10 +42,10 @@ class NodeSet {
   }
 
   start(stage) {
-    this.table.updated.on((op, id, data, when) => {
+    this.table.updated.on((op, id, row, when) => {
       if (op === 'add') {
         // Add a new node from the table to the set
-        const newNode = this.add(stage, data, when)
+        const newNode = this.add(stage, row, when)
         this.map.set(id, newNode)
         newNode.sync.on(() => {
           this.table.update(id, row => newNode.save(stage, row))
@@ -54,7 +53,7 @@ class NodeSet {
       } else if (op === 'update') {
         // Load updates from the table into the node
         const node = this.map.get(id)
-        node.load(stage, data, when)
+        node.load(stage, row, when)
       } else if (op === 'remove') {
         // Remove the node from the set
         const node = this.map.get(id)
