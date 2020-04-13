@@ -13,34 +13,6 @@ export class Rock extends Moving {
     this.shoot = new Event()
   }
 
-  static add(stage, data, when) {
-    let rock = new Rock(data)
-    let age = when - data.mod
-    rock.start(stage)
-    rock.tick(age, stage)
-    return rock
-  }
-
-  save(stage, prev) {
-    let saved = super.save(stage, prev)
-    // Save the position and velocity, in case the rock was ricocheted
-    saved.offsetX = this.offsetX
-    saved.offsetY = this.offsetY
-    saved.velocityX = this.velocityX
-    saved.velocityY = this.velocityY
-    return saved
-  }
-
-  load(stage, data, when) {
-    super.load(stage, data, when)
-    // Load the position and velocity from the saved data
-    let age = when - data.mod
-    this.moveTo(data.offsetX, data.offsetY)
-    this.velocityX = data.velocityX
-    this.velocityY = data.velocityY
-    rock.tick(age, stage)
-  }
-
   start(stage) {
     super.start(stage)
     this.leave.on(side => this.onLeave(side))
@@ -53,5 +25,22 @@ export class Rock extends Moving {
     if (side !== this.side) {
       this.remove.emit()
     }
+  }
+
+  save(stage, row) {
+    super.save(stage, row)
+    row.offsetX = this.offsetX
+    row.offsetY = this.offsetY
+    row.velocityX = this.velocityX
+    row.velocityY = this.velocityY
+  }
+
+  load(stage, row, when) {
+    super.load(stage, row, when)
+    let age = when - row.mod
+    this.moveTo(row.offsetX, row.offsetY)
+    this.velocityX = row.velocityX
+    this.velocityY = row.velocityY
+    this.tick(age, stage)
   }
 }
