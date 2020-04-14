@@ -39,7 +39,11 @@ module.exports = [
       new CleanWebpackPlugin(),
       new HtmlWebpackPlugin({
         title: `Player One`,
-        template: './static/index.html',
+        meta: {
+          viewport:
+            'user-scalable=no, initial-scale=1.0, maximum-scale=1.0, ' +
+            'minimum-scale=1.0, width=device-width, height=device-height',
+        },
       }),
       new webpack.ProvidePlugin({
         Stage: 'stage-js/platform/web',
