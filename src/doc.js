@@ -77,7 +77,7 @@ class Table {
     if (row) {
       if (existing) {
         Object.assign(existing, row)
-        this.updated.emit('update', id, row, when, source)
+        this.updated.emit('update', id, existing, when, source)
       } else {
         this.rows.set(id, row)
         this.updated.emit('add', id, row, when, source)
@@ -103,10 +103,10 @@ class Table {
    */
   update(id, handler) {
     const row = this.rows.get(id)
-    const saved = handler(row)
-    saved.mod = elapsed()
-    Object.assign(existing, saved)
-    this.updated.emit('update', id, saved)
+    const diff = {}
+    diff.mod = elapsed()
+    handler(diffProxy(row, diff))
+    this.updated.emit('update', id, diff)
   }
 
   /**
@@ -117,4 +117,24 @@ class Table {
       this.updated.emit('remove', id, null)
     }
   }
+}
+
+/**
+ * Return a proxy object for a row, where all changes are written to the diff
+ * object as well. The purpose is to avoid redundant properties sent over the
+ * network for row updates.
+ */
+function diffProxy(row, diff) {
+  return new Proxy(row, {
+    set: (obj, prop, value) => {
+      const orig = row[prop]
+      if (typeof orig === 'undefined') {
+        return false // Error if writing a new property
+      } else {
+        // Write assignments to the target object and the diff
+        diff[prop] = obj[prop] = value
+        return true
+      }
+    },
+  })
 }

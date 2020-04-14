@@ -12,8 +12,8 @@ export class State {
   constructor(url) {
     this.url = url
     this.doc = new StateDoc()
-    this.rockSet = new NodeSet(this.doc.rocks, Rock.add)
-    this.crystalSet = new NodeSet(this.doc.crystals, Crystal.add)
+    this.rockSet = new NodeSet(this.doc.rocks, Rock)
+    this.crystalSet = new NodeSet(this.doc.crystals, Crystal)
   }
 
   start(stage) {
@@ -35,18 +35,21 @@ export class State {
  * Manages a set of nodes that are synced with a table on the server.
  */
 class NodeSet {
-  constructor(table, add) {
+  constructor(table, nodeClass) {
     this.table = table
-    this.add = add
+    this.nodeClass = nodeClass
     this.map = new Map()
   }
 
   start(stage) {
-    this.table.updated.on((op, id, row, when) => {
-      if (op === 'add') {
+    this.table.updated.on((op, id, row, when, source) => {
+      if (!source) {
+        // Ignore local updates
+      } else if (op === 'add') {
         // Add a new node from the table to the set
-        const newNode = this.add(stage, row, when)
+        const newNode = this.nodeClass.add(stage, row, when)
         this.map.set(id, newNode)
+        newNode.remove.on(() => this.table.remove(id))
         newNode.sync.on(() => {
           this.table.update(id, row => newNode.save(stage, row))
         })

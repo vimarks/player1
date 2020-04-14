@@ -110,16 +110,27 @@ export class Node {
   }
 
   /**
-   * Save updated state from the node.
+   * Add a new node from state.
    */
-  save(stage, prev) {
-    return {} // Nothing to save
+  static add(stage, data, when) {
+    let node = new this(data)
+    let age = when - data.mod
+    node.start(stage)
+    node.tick(age, stage)
+    return node
   }
 
   /**
-   * Load updated state from a prior save() call.
+   * Save updated state from the node to a row.
    */
-  load(stage, saved, when) {
-    // Nothing to load
+  save(stage, row) {
+    // Only updatable properties should be saved
+  }
+
+  /**
+   * Load updated state from a row into the node.
+   */
+  load(stage, row, when) {
+    // Only updatable properties should be loaded
   }
 }

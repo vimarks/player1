@@ -42,7 +42,7 @@ export class Moving extends Node {
    * Moves the node relative to its current position, adjusted for framerate.
    */
   moveBy(xAmount, yAmount, dt) {
-    let adjust = dt ? dt * constants.dtCoefficient : 1
+    let adjust = dt * constants.dtCoefficient
     let relOffsetX = xAmount ? xAmount * adjust : 0
     let relOffsetY = yAmount ? yAmount * adjust : 0
     if (relOffsetX !== 0 || relOffsetY !== 0) {
@@ -54,7 +54,7 @@ export class Moving extends Node {
    * Rotates the node relative to its current angle, adjusted for framerate.
    */
   rotateBy(amount, dt) {
-    let adjust = dt ? dt * constants.dtCoefficient : 1
+    let adjust = dt * constants.dtCoefficient
     let relRotation = amount ? amount * adjust : 0
     if (relRotation !== 0) {
       this.rotateTo(this.rotation + relRotation)
@@ -67,7 +67,7 @@ export class Moving extends Node {
    * cannot accelerate faster than that value.
    */
   accelerate(direction, amount, maxVelocity, dt) {
-    let adjust = dt ? dt * constants.dtCoefficient : 1
+    let adjust = dt * constants.dtCoefficient
     this.velocityX += Trig.calculateHorizontal(direction, amount * adjust)
     this.velocityY += Trig.calculateVertical(direction, amount * adjust)
 
@@ -84,7 +84,10 @@ export class Moving extends Node {
   /**
    * Apply an instant velocity change from a ricochet with the given node.
    */
-  ricochet(that, amount, maxVelocity, dt) {
+  ricochet(that, amount, maxVelocity) {
+    // dt value is constant since a ricochet is an instantaneous operation that
+    // does not scale based on elapsed time
+    let dt = 1 / constants.dtCoefficient
     let direction =
       Math.PI +
       Trig.calculateAngle(

@@ -11,12 +11,8 @@ export class Crystal extends Moving {
   }
 
   static add(stage, data, when) {
-    let crystal = new Crystal(data)
-    let age = when - data.mod
-    crystal.start(stage)
-    crystal.tick(age, stage)
     sounds.crystalSpawn.emit()
-    return crystal
+    return super.add(stage, data, when)
   }
 
   start(stage) {
