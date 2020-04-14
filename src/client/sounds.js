@@ -1,4 +1,6 @@
 import { Event } from '../event.js'
+import preload from './preload.js'
+
 import crystalCaptureSound from '../static/sounds/crystal-capture.wav'
 import crystalSpawnSound from '../static/sounds/crystal-spawn.wav'
 import explosionSound from '../static/sounds/explosion.wav'
@@ -13,6 +15,6 @@ export default {
 
 function bindSoundEffect(soundFile) {
   const audio = document.createElement('audio')
-  audio.src = soundFile
-  return new Event().on(audio.play.bind(audio))
+  audio.src = preload(soundFile, 'audio')
+  return new Event().on(() => audio.play())
 }
