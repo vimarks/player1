@@ -3,7 +3,7 @@ import { elapsed } from './time.js'
 import { randHex } from './rand.js'
 
 // The types that are kept in the shared game state
-export const TYPES = ['rocks', 'crystals']
+export const TYPES = ['rocks', 'crystals', 'powerups']
 
 /**
  * Keeps the shared game state.

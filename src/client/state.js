@@ -4,6 +4,7 @@ import { Message, Connection } from '../conn.js'
 import id from './id.js'
 import { Rock } from './rock.js'
 import { Crystal } from './crystal.js'
+import { Powerup } from './powerup.js'
 
 /**
  * Manage the game state that is synchronized with the server.
@@ -14,6 +15,7 @@ export class State {
     this.doc = new StateDoc()
     this.rockSet = new NodeSet(this.doc.rocks, Rock)
     this.crystalSet = new NodeSet(this.doc.crystals, Crystal)
+    this.powerupSet = new NodeSet(this.doc.powerups, Powerup)
   }
 
   start(stage) {
@@ -28,6 +30,7 @@ export class State {
     // Handle shared state updates
     this.rockSet.start(stage)
     this.crystalSet.start(stage)
+    this.powerupSet.start(stage)
   }
 }
 
