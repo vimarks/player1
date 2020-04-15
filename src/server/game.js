@@ -4,6 +4,7 @@ import { elapsed } from '../time.js'
 import { StateDoc } from '../doc.js'
 import { RockMaker } from './rockmaker.js'
 import { CrystalMaker } from './crystalmaker.js'
+import { PowerupMaker } from './powerupmaker.js'
 
 // Mimicks the methods we need on the `stage` object
 const stage = {
@@ -55,6 +56,13 @@ export class Game {
     crystalMaker.newCrystal.on(crystal => {
       // Push new crystal into the state doc
       this.doc.crystals.add(crystal)
+    })
+
+    // Begin generating powerUps
+    const powerupMaker = new PowerupMaker()
+    powerupMaker.start(stage)
+    powerupMaker.newPowerup.on(powerup => {
+      this.doc.powerups.add(powerup)
     })
   }
 }

@@ -3,6 +3,7 @@ import bulletImage from '../static/laser-blue.png'
 import asteroidImage from '../static/asteroid-brown.png'
 import explosionSheet from '../static/explosionSpriteSheet.png'
 import crystalSheet from '../static/crystalSpriteSheet.png'
+import powerupSheet from '../static/powerupSpriteSheet.png'
 
 export default [
   {
@@ -58,6 +59,12 @@ export default [
       crystal: buildTexture(36, 5, 50, 90),
     },
   },
+  {
+    image: powerupSheet,
+    textures: {
+      powerup: buildTexture(6, 5, 60, 60),
+    },
+  },
 ]
 
 function buildTexture(rows, cols, w, h) {
@@ -65,12 +72,12 @@ function buildTexture(rows, cols, w, h) {
   let x = 0
   let y = 0
   for (let i = 0; i < rows; i++) {
-    if (y != 0) {
-      texture.push({ x, y, width: w, height: h })
-    }
     x = 0
-    for (let i = 0; i < cols - 1; i++) {
-      texture.push({ x, y, width: w, height: h })
+    texture.push({ x, y, width: w, height: h })
+    x += w
+
+    for (let n = 1; n < cols; n++) {
+      texture.push({ x, y, width: w, heigth: h })
       x += w
     }
     y += h

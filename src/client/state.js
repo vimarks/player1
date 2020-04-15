@@ -6,6 +6,7 @@ import { Rock } from './rock.js'
 import { Crystal } from './crystal.js'
 import { Bullet } from './bullet.js'
 import { Shuttle } from './shuttle.js'
+import { Powerup } from './powerup.js'
 
 /**
  * Manage the game state that is synchronized with the server.
@@ -18,6 +19,7 @@ export class State {
     this.crystalSet = new NodeSet(this.doc.crystals, Crystal)
     this.bulletSet = new NodeSet(this.doc.bullets, Bullet)
     this.shuttleSet = new NodeSet(this.doc.shuttles, Shuttle)
+    this.powerupSet = new NodeSet(this.doc.powerups, Powerup)
   }
 
   start(stage) {
@@ -34,6 +36,7 @@ export class State {
     this.crystalSet.start(stage)
     this.bulletSet.start(stage)
     this.shuttleSet.start(stage)
+    this.powerupSet.start(stage)
   }
 }
 
