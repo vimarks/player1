@@ -6,6 +6,13 @@ import crystalSheet from '../static/crystalSpriteSheet.png'
 
 export default [
   {
+    textures: {
+      monospace: buildFont('bold 24px monospace', 24),
+      sansserif: buildFont('bold 24px sans-serif', 24),
+    },
+  },
+
+  {
     image: shuttleImage,
     textures: {
       shuttle: { x: 0, y: 0, width: 52, height: 52 },
@@ -51,23 +58,6 @@ export default [
       crystal: buildTexture(36, 5, 50, 90),
     },
   },
-
-  {
-    textures: {
-      text: function (d) {
-        d += ''
-        return Stage.canvas(function (ctx) {
-          let ratio = 2
-          this.size(16, 24, ratio)
-          ctx.scale(ratio, ratio)
-          ctx.font = 'bold 24px monospace'
-          ctx.fillStyle = '#ddd'
-          ctx.textBaseline = 'top'
-          ctx.fillText(d, 0, 1)
-        })
-      },
-    },
-  },
 ]
 
 function buildTexture(rows, cols, w, h) {
@@ -86,4 +76,29 @@ function buildTexture(rows, cols, w, h) {
     y += h
   }
   return texture
+}
+
+function buildFont(font, height, fill = '#ddd') {
+  const widths = new Map()
+  return function (string) {
+    string += ''
+    if (!widths.has(string)) {
+      widths.set(string, getStringWidth(string, font))
+    }
+    const width = widths.get(string)
+    return Stage.canvas(function (ctx) {
+      this.size(width, height)
+      ctx.font = font
+      ctx.fillStyle = fill
+      ctx.textBaseline = 'top'
+      ctx.fillText(string, 0, 0)
+    })
+  }
+}
+
+function getStringWidth(string, font) {
+  const canvas = document.createElement('canvas')
+  const ctx = canvas.getContext('2d')
+  ctx.font = font
+  return ctx.measureText(string).width
 }
