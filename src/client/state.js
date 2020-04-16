@@ -4,6 +4,8 @@ import { Message, Connection } from '../conn.js'
 import id from './id.js'
 import { Rock } from './rock.js'
 import { Crystal } from './crystal.js'
+import { Bullet } from './bullet.js'
+import { Shuttle } from './shuttle.js'
 
 /**
  * Manage the game state that is synchronized with the server.
@@ -14,6 +16,8 @@ export class State {
     this.doc = new StateDoc()
     this.rockSet = new NodeSet(this.doc.rocks, Rock)
     this.crystalSet = new NodeSet(this.doc.crystals, Crystal)
+    this.bulletSet = new NodeSet(this.doc.bullets, Bullet)
+    this.shuttleSet = new NodeSet(this.doc.shuttles, Shuttle)
   }
 
   start(stage) {
@@ -28,6 +32,8 @@ export class State {
     // Handle shared state updates
     this.rockSet.start(stage)
     this.crystalSet.start(stage)
+    this.bulletSet.start(stage)
+    this.shuttleSet.start(stage)
   }
 }
 
@@ -41,16 +47,29 @@ class NodeSet {
     this.map = new Map()
   }
 
+  values() {
+    return this.map.values()
+  }
+
+  /**
+   * Add a new row to the node set.
+   */
+  add(row = {}) {
+    const id = this.table.add(row, true)
+    return this.map.get(id)
+  }
+
   start(stage) {
+    // Handle all table events
     this.table.updated.on((op, id, row, when, source) => {
       if (!source) {
         // Ignore local updates
       } else if (op === 'add') {
         // Add a new node from the table to the set
-        const newNode = this.nodeClass.add(stage, row, when)
+        const newNode = this.newNode(stage, row, when)
         this.map.set(id, newNode)
         newNode.remove.on(() => this.table.remove(id))
-        newNode.sync.on(() => {
+        newNode.sync.until(newNode.remove, () => {
           this.table.update(id, row => newNode.save(stage, row))
         })
       } else if (op === 'update') {
@@ -66,7 +85,14 @@ class NodeSet {
     })
   }
 
-  values() {
-    return this.map.values()
+  /**
+   * Create and start the node from the row.
+   */
+  newNode(stage, row, when) {
+    const node = new this.nodeClass(row)
+    const age = when - row.mod
+    node.start(stage)
+    node.tick(age, stage)
+    return node
   }
 }

@@ -1,4 +1,5 @@
 import constants from '../constants.js'
+import { Event } from '../event.js'
 
 // Get the current time in milliseconds.
 function now() {
@@ -7,24 +8,16 @@ function now() {
 
 /**
  * Binds input events from the keyboard, mouse, or touch screen to a set of
- * actions.
- *
- * Action activation, updating, and clearing will publish events:
- *
- *   stage.on('Input.action.accelerate', val => ...)
- *   stage.on('Input.action.accelerate.clear', () => ...)
- *
- * The events published are intended to be consumed by the Actions class.
+ * actions. Events are emitted with the action name and value.
  */
-export class Input {
+export class Input extends Event {
   constructor(
     keyBindings = constants.keyBindings,
-    mouseBindings = constants.mouseBindings,
-    source = 'Input'
+    mouseBindings = constants.mouseBindings
   ) {
+    super()
     this.keyBindings = keyBindings
     this.mouseBindings = mouseBindings
-    this.source = source
     this.valueCache = {}
     this.timeouts = {}
     this.firstTouchId = null
@@ -72,7 +65,7 @@ export class Input {
         this.startInterval(stage, action, interval, when, value)
       } else {
         // Action is not rate limited, publish right away
-        stage.publish(`${this.source}.action.${action}`, [when(), value])
+        this.emit(action, value, when())
       }
     }
   }
@@ -83,7 +76,7 @@ export class Input {
    */
   startInterval(stage, action, interval, when, value) {
     if (!this.timeouts[action]) {
-      stage.publish(`${this.source}.action.${action}`, [when(), value])
+      this.emit(action, value, when())
       this.delayNextPublish(stage, action, interval, when, value)
     }
   }
@@ -103,12 +96,12 @@ export class Input {
   }
 
   /**
-   * Clear an action by setting its value to `undefined`.
+   * Clear an action by setting its value to `null`.
    */
   clearAction(stage, action, when = now) {
     if (action && this.valueCache[action]) {
-      this.valueCache[action] = undefined
-      stage.publish(`${this.source}.action.${action}.clear`, [when()])
+      this.valueCache[action] = null
+      this.emit(action, null, when())
     }
   }
 
@@ -141,7 +134,6 @@ export class Input {
    * When the mouse leaves the screen, clear the mouse movement action value.
    */
   onMouseOut(stage, evt) {
-    this.mouseMovePoint = null
     this.clearAction(stage, this.mouseBindings.move)
   }
 
@@ -235,10 +227,6 @@ export class Input {
 
 // Action value indicating the action is active.
 class Active {
-  constructor() {
-    this.active = true
-  }
-
   equals(prev) {
     return prev instanceof Active
   }

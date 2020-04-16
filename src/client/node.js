@@ -110,17 +110,6 @@ export class Node {
   }
 
   /**
-   * Add a new node from state.
-   */
-  static add(stage, data, when) {
-    let node = new this(data)
-    let age = when - data.mod
-    node.start(stage)
-    node.tick(age, stage)
-    return node
-  }
-
-  /**
    * Save updated state from the node to a row.
    */
   save(stage, row) {

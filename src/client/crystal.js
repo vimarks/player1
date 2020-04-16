@@ -8,13 +8,9 @@ export class Crystal extends Node {
     super(node, offsetX, offsetY)
   }
 
-  static add(stage, data, when) {
-    sounds.crystalSpawn.emit()
-    return super.add(stage, data, when)
-  }
-
   start(stage) {
     super.start(stage)
+    sounds.crystalSpawn.emit()
     this.node.repeat(10, () => this.remove.emit()).fps(60)
   }
 }

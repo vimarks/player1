@@ -37,13 +37,29 @@ describe('Event', () => {
 
   test('run a callback until another event emits', () => {
     const ev1 = new Event()
-    const ev2 = new Event()
+    const stop = new Event()
     const func = jest.fn()
 
-    ev1.until(ev2, func)
+    ev1.until(stop, func)
     ev1.emit('data1')
     ev1.emit('data2')
-    ev2.emit('stop')
+    stop.emit()
+    ev1.emit('data3')
+
+    expect(func.mock.calls).toEqual([['data1'], ['data2']])
+  })
+
+  test('trigger an event until another event emits', () => {
+    const ev1 = new Event()
+    const ev2 = new Event()
+    const stop = new Event()
+    const func = jest.fn()
+
+    ev1.triggerUntil(stop, ev2)
+    ev2.on(func)
+    ev1.emit('data1')
+    ev1.emit('data2')
+    stop.emit()
     ev1.emit('data3')
 
     expect(func.mock.calls).toEqual([['data1'], ['data2']])

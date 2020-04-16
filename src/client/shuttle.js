@@ -1,5 +1,6 @@
 import constants from '../constants.js'
 import * as Trig from '../trig.js'
+import { Event } from '../event.js'
 import sounds from './sounds.js'
 import { Actions } from './actions.js'
 import { Bullet } from './bullet.js'
@@ -7,12 +8,11 @@ import { Moving } from './moving.js'
 import { Node } from './node.js'
 
 export class Shuttle extends Moving {
-  constructor(source) {
+  constructor({}) {
     // Initialize with the 'shuttle' image at the center of the screen
     super(Stage.image('shuttle'))
-    this.bulletSet = new Set()
-    this.reloading = false
-    this.actions = new Actions(this.node, source, [
+    this.fire = new Event()
+    this.actions = new Actions([
       'fire',
       'focus',
       'turnLeft',
@@ -24,18 +24,16 @@ export class Shuttle extends Moving {
   start(stage) {
     super.start(stage)
     this.leave.on(side => this.onLeave(side))
-
-    // Listen for actions we care about
-    this.actions.start(stage)
+    this.actions.trigger(this.sync)
 
     // Fire a bullet on the 'fire' action
-    this.actions.on('fire', when => this.fireBullet(stage, when))
+    this.actions.fire.on(() => this.handleFire())
 
     // Spin the shuttle on the 'turnLeft' and 'turnRight' actions
-    this.actions.on('turnLeft', () => this.turnLeft())
-    this.actions.onClear('turnLeft', () => this.turnRight())
-    this.actions.on('turnRight', () => this.turnRight())
-    this.actions.onClear('turnRight', () => this.turnLeft())
+    this.actions.turnLeft.on(() => this.turnLeft())
+    this.actions.turnLeft.clear.on(() => this.turnRight())
+    this.actions.turnRight.on(() => this.turnRight())
+    this.actions.turnRight.clear.on(() => this.turnLeft())
 
     // Explode on removal
     this.remove.on(() => this.explode(stage))
@@ -45,14 +43,14 @@ export class Shuttle extends Moving {
     super.tick(dt, stage)
 
     // Rotate the shuttle towards the focus point, unless already turning
-    if (this.actions.focus && this.spin === 0) {
-      let focusAngle = this.getFocusAngle(this.actions.focus)
+    if (this.actions.focus.active && this.spin === 0) {
+      let focusAngle = this.getFocusAngle(this.actions.focus.value)
       let focusDiff = Trig.diffAngles(this.rotation, focusAngle)
       this.rotateBy(focusDiff * constants.shuttleRotation, dt)
     }
 
     // Engage thrusters with the 'accelerate' action
-    if (this.actions.accelerate) {
+    if (this.actions.accelerate.active) {
       this.accelerate(
         this.rotation,
         constants.shuttleAcceleration,
@@ -89,23 +87,32 @@ export class Shuttle extends Moving {
     )
   }
 
-  fireBullet(stage, when) {
-    // Create the bullet relative to the shuttle location and rotation
-    let bullet = new Bullet(
-      this.offsetX,
-      this.offsetY,
-      this.rotation,
-      this.velocityX,
-      this.velocityY
-    )
+  handleFire() {
+    // Emit a fire event with the shuttle location and rotation
+    this.fire.emit({
+      offsetX: this.offsetX,
+      offsetY: this.offsetY,
+      rotation: this.rotation,
+      velocityX: this.velocityX,
+      velocityY: this.velocityY,
+    })
+  }
 
-    this.bulletSet.add(bullet)
-    bullet.remove.on(() => this.bulletSet.delete(bullet))
+  save(stage, row) {
+    super.save(stage, row)
+    row.offsetX = this.offsetX
+    row.offsetY = this.offsetY
+    row.rotation = this.rotation
+    row.velocityX = this.velocityX
+    row.velocityY = this.velocityY
+  }
 
-    // Start the bullet, relative to the same parent node as the shuttle,
-    // so that the shuttle movement does not affect the bullet.
-    this.visible && bullet.start(stage)
-    sounds.shootLaser.emit()
+  load(stage, row) {
+    super.load(stage, row)
+    this.moveTo(row.offsetX, row.offsetY)
+    this.rotateTo(row.rotation)
+    this.velocityX = row.velocityX
+    this.velocityY = row.velocityY
   }
 
   /**

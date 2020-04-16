@@ -3,7 +3,7 @@ import { elapsed } from './time.js'
 import { randHex } from './rand.js'
 
 // The types that are kept in the shared game state
-export const TYPES = ['rocks', 'crystals']
+export const TYPES = ['rocks', 'crystals', 'bullets', 'shuttles']
 
 /**
  * Keeps the shared game state.
@@ -49,6 +49,13 @@ export class StateDoc {
       }
     })
 
+    // Remove all rows associated with a closed connection
+    conn.close.on(() => {
+      this.forEach((type, table) => {
+        table.removeOwned(conn)
+      })
+    })
+
     // Send all tables as changes
     const changes = []
     this.forEach((type, table) => {
@@ -65,8 +72,28 @@ class Table {
   constructor(doc, type) {
     this.doc = doc
     this.type = type
+    this.owned = new WeakMap()
     this.rows = new Map()
     this.updated = new Event()
+  }
+
+  /**
+   * Set ownership of the given row ID.
+   */
+  setOwned(source, id) {
+    if (!this.owned.has(source)) {
+      this.owned.set(source, new Set())
+    }
+    const owned = this.owned.get(source)
+    owned.add(id)
+  }
+
+  /**
+   * Remove rows owned by the source.
+   */
+  removeOwned(source) {
+    const owned = this.owned.get(source)
+    if (owned) owned.forEach(id => this.remove(id))
   }
 
   /**
@@ -80,6 +107,7 @@ class Table {
         this.updated.emit('update', id, existing, when, source)
       } else {
         this.rows.set(id, row)
+        this.setOwned(source, id)
         this.updated.emit('add', id, row, when, source)
       }
     } else if (existing) {
@@ -91,30 +119,33 @@ class Table {
   /**
    * Add a row to the table.
    */
-  add(row) {
+  add(row, source = null) {
     const id = randHex(16)
-    row.mod = elapsed()
+    const when = elapsed()
+    row.mod = when
     this.rows.set(id, row)
-    this.updated.emit('add', id, row)
+    this.updated.emit('add', id, row, when, source)
+    return id
   }
 
   /**
    * Update an existing row in the table.
    */
-  update(id, handler) {
+  update(id, handler, source = null) {
     const row = this.rows.get(id)
     const diff = {}
-    diff.mod = elapsed()
+    const when = elapsed()
+    diff.mod = when
     handler(diffProxy(row, diff))
-    this.updated.emit('update', id, diff)
+    this.updated.emit('update', id, diff, when, source)
   }
 
   /**
    * Remove an existing row in the table.
    */
-  remove(id) {
+  remove(id, source = null) {
     if (this.rows.delete(id)) {
-      this.updated.emit('remove', id, null)
+      this.updated.emit('remove', id, null, elapsed(), source)
     }
   }
 }
@@ -127,14 +158,9 @@ class Table {
 function diffProxy(row, diff) {
   return new Proxy(row, {
     set: (obj, prop, value) => {
-      const orig = row[prop]
-      if (typeof orig === 'undefined') {
-        return false // Error if writing a new property
-      } else {
-        // Write assignments to the target object and the diff
-        diff[prop] = obj[prop] = value
-        return true
-      }
+      // Write assignments to the target object and the diff
+      diff[prop] = obj[prop] = value
+      return true
     },
   })
 }

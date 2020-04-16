@@ -25,6 +25,15 @@ export class Event {
   }
 
   /**
+   * Register a callback to run when the event occurs, but only until another
+   * event occurs.
+   */
+  until(untilEvent, callback) {
+    untilEvent.once(() => this.callbacks.delete(callback))
+    return this.on(callback)
+  }
+
+  /**
    * Trigger another event when the event occurs.
    */
   trigger(otherEvent, ...preArgs) {
@@ -32,10 +41,11 @@ export class Event {
   }
 
   /**
-   * Register a callback to run when the event occurs, but only until another
-   * event is triggered.
+   * Trigger another event when the event occurs, but only until another event
+   * occurs.
    */
-  until(untilEvent, callback) {
+  triggerUntil(untilEvent, otherEvent, ...preArgs) {
+    const callback = (...args) => otherEvent.emit(...preArgs, ...args)
     untilEvent.once(() => this.callbacks.delete(callback))
     return this.on(callback)
   }

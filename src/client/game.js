@@ -22,12 +22,11 @@ export class Game extends Node {
   start(stage) {
     super.start(stage)
 
+    let gameOver = new Event()
     let input = new Input()
     let collisions = new Collisions()
     let timer = new Timer(constants.initTimeLimit)
     let vault = new Vault(constants.initBalance)
-    let shuttle = new Shuttle(input.source)
-    let gameOver = new Event()
     let state = new State(constants.serverUrl)
 
     // Initialize game mechanics
@@ -35,8 +34,11 @@ export class Game extends Node {
     timer.start(stage)
     vault.start(stage)
     collisions.start(stage)
-    shuttle.start(stage)
     state.start(stage)
+
+    // Initialize the shuttle
+    let shuttle = state.shuttleSet.add()
+    input.triggerUntil(shuttle.remove, shuttle.actions)
 
     // Initialize the events
     gameOver
@@ -52,7 +54,7 @@ export class Game extends Node {
       .trigger(gameOver)
 
     collisions
-      .detect(state.rockSet, shuttle.bulletSet)
+      .detect(state.rockSet, state.bulletSet)
       .triggerLeft(rock => rock.shoot)
       .triggerRight(bullet => bullet.remove)
 
@@ -62,6 +64,8 @@ export class Game extends Node {
       .trigger(vault.bankCrystal)
       .trigger(sounds.crystalCapture)
       .triggerRight(crystal => crystal.remove)
+
+    shuttle.fire.on(row => state.bulletSet.add(row))
 
     // Initialize the screen
     this.node.size(constants.viewbox.width, constants.viewbox.height)
