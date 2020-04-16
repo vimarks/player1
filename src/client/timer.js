@@ -1,23 +1,17 @@
 import { Event } from '../event.js'
-import { Node } from './node.js'
+import { Text } from './text.js'
 
-export class Timer extends Node {
+export class Timer extends Text {
   constructor(timeLimit) {
-    super(Stage.string('text'))
+    super({ alignY: 0.92 })
     this.timeLimit = timeLimit
     this.expire = new Event()
     this.extendTimer = new Event()
     this.showTotalTime = new Event()
   }
 
-  append(stage) {
-    // Position the timer in the entire window, not just the game box
-    stage.append(this.node)
-  }
-
   start(stage) {
     super.start(stage)
-    this.node.pin({ alignY: 0.92 })
     this.setCountDownTimer(this.timeLimit * 60)
     this.startCountDownTimer(stage)
     this.extendTimer.on(() => this.addTime())
@@ -35,8 +29,9 @@ export class Timer extends Node {
   }
 
   displayTotalTime(minutes, secondsStr) {
-    this.node.value(`round time:  ${minutes}:${secondsStr}`)
+    this.value = `round time:  ${minutes}:${secondsStr}`
     clearInterval(this.intervalID)
+    this.node.scale(1.5)
     this.node.pin({ alignY: 0.55 })
   }
 
@@ -66,7 +61,7 @@ export class Timer extends Node {
 
   // Gets current time in seconds
   getCurrentTime() {
-    let [minutes, seconds] = this.node.value().split(':')
+    let [minutes, seconds] = this.value.split(':')
     minutes = parseInt(minutes)
     seconds = parseInt(seconds)
     seconds = seconds + minutes * 60
@@ -78,7 +73,7 @@ export class Timer extends Node {
     let minutes = Math.floor(timeLeft / 60)
     let seconds = timeLeft % 60
     let secondsStr = `${seconds}`.padStart(2, '0')
-    this.node.value(`${minutes}:${secondsStr}`)
+    this.value = `${minutes}:${secondsStr}`
   }
 
   addTime() {
