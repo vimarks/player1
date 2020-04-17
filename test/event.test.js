@@ -1,4 +1,4 @@
-import { Event } from '../src/event.js'
+import { Event, FilteredEvent } from '../src/event.js'
 
 describe('Event', () => {
   test('run a full chain of callbacks', () => {
@@ -37,15 +37,45 @@ describe('Event', () => {
 
   test('run a callback until another event emits', () => {
     const ev1 = new Event()
-    const ev2 = new Event()
+    const stop = new Event()
     const func = jest.fn()
 
-    ev1.until(ev2, func)
+    ev1.until(stop, func)
     ev1.emit('data1')
     ev1.emit('data2')
-    ev2.emit('stop')
+    stop.emit()
     ev1.emit('data3')
 
     expect(func.mock.calls).toEqual([['data1'], ['data2']])
+  })
+
+  test('trigger an event until another event emits', () => {
+    const ev1 = new Event()
+    const ev2 = new Event()
+    const stop = new Event()
+    const func = jest.fn()
+
+    ev1.triggerUntil(stop, ev2)
+    ev2.on(func)
+    ev1.emit('data1')
+    ev1.emit('data2')
+    stop.emit()
+    ev1.emit('data3')
+
+    expect(func.mock.calls).toEqual([['data1'], ['data2']])
+  })
+
+  test('topic events only emit on match', () => {
+    const start = new Event()
+    const func1 = jest.fn()
+    const func2 = jest.fn()
+
+    start.topic('topic1').on(func1)
+    start.topic('topic2').on(func2)
+    start.emit('topic1', 'data1')
+    start.emit('topic2', 'data2')
+
+    expect(func1.mock.calls).toEqual([['data1']])
+    expect(func2.mock.calls).toEqual([['data2']])
   })
 })

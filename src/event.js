@@ -25,19 +25,40 @@ export class Event {
   }
 
   /**
-   * Trigger another event when the event occurs.
+   * Register a callback to run when the event occurs, but only until another
+   * event occurs.
    */
-  trigger(otherEvent, ...preArgs) {
-    return this.on((...args) => otherEvent.emit(...preArgs, ...args))
+  until(untilEvent, callback) {
+    if (untilEvent) untilEvent.once(() => this.callbacks.delete(callback))
+    return this.on(callback)
   }
 
   /**
-   * Register a callback to run when the event occurs, but only until another
-   * event is triggered.
+   * Trigger another event when the event occurs.
    */
-  until(untilEvent, callback) {
-    untilEvent.once(() => this.callbacks.delete(callback))
-    return this.on(callback)
+  trigger(otherEvent, ...preArgs) {
+    return this.triggerUntil(null, otherEvent, ...preArgs)
+  }
+
+  /**
+   * Trigger another event when the event occurs, but only until another event
+   * occurs.
+   */
+  triggerUntil(untilEvent, otherEvent, ...preArgs) {
+    const callback = (...args) => otherEvent.emit(...preArgs, ...args)
+    return this.until(untilEvent, callback)
+  }
+
+  /**
+   * Return a new event that will emit conditionally based on the first
+   * argument of this event, with the remaining arguments.
+   */
+  topic(name) {
+    const topicEvent = new Event()
+    this.on((topic, ...args) => {
+      if (topic === name) topicEvent.emit(...args)
+    })
+    return topicEvent
   }
 
   /**

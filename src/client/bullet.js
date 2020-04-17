@@ -1,9 +1,10 @@
 import constants from '../constants.js'
 import * as Trig from '../trig.js'
+import sounds from './sounds.js'
 import { Moving } from './moving.js'
 
 export class Bullet extends Moving {
-  constructor(offsetX, offsetY, rotation, velocityX, velocityY) {
+  constructor({ offsetX, offsetY, rotation, velocityX, velocityY }) {
     // Given velocity and rotation are from the shuttle when the bullet was
     // fired, so add velocity direction the ship was facing to make the bullet
     // fly away from the ship
@@ -29,6 +30,7 @@ export class Bullet extends Moving {
 
   start(stage) {
     super.start(stage)
+    sounds.shootLaser.emit()
     this.leave.on(side => this.onLeave(side))
   }
 

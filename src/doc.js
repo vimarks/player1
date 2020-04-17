@@ -3,7 +3,7 @@ import { elapsed } from './time.js'
 import { randHex } from './rand.js'
 
 // The types that are kept in the shared game state
-export const TYPES = ['rocks', 'crystals']
+export const TYPES = ['rocks', 'crystals', 'bullets', 'shuttles']
 
 /**
  * Keeps the shared game state.
@@ -31,9 +31,9 @@ export class StateDoc {
   sync(conn) {
     // Send document changes on the socket until it closes
     this.forEach((type, table) => {
-      table.updated.until(conn.close, (op, id, row, when, source) => {
+      table.sync.until(conn.close, (id, row, when, emit, source) => {
         if (conn !== source) {
-          const changes = [{ type, id, row }]
+          const changes = [{ type, id, row, emit }]
           conn.send.emit({ when, changes })
         }
       })
@@ -43,10 +43,17 @@ export class StateDoc {
     conn.recv.on(msg => {
       const when = msg.when
       if (msg.changes.length > 0) {
-        msg.changes.forEach(({ type, id, row }) => {
-          this[type].apply(id, row, when, conn)
+        msg.changes.forEach(({ type, id, row, emit }) => {
+          this[type].apply(id, row, when, emit, conn)
         })
       }
+    })
+
+    // Remove all rows associated with a closed connection
+    conn.close.on(() => {
+      this.forEach((type, table) => {
+        table.removeOwned(conn)
+      })
     })
 
     // Send all tables as changes
@@ -65,26 +72,50 @@ class Table {
   constructor(doc, type) {
     this.doc = doc
     this.type = type
+    this.owned = new WeakMap()
     this.rows = new Map()
-    this.updated = new Event()
+    this.sync = new Event()
+    this.added = new Event().trigger(this.sync)
+    this.updated = new Event().trigger(this.sync)
+    this.removed = new Event().trigger(this.sync)
+  }
+
+  /**
+   * Set ownership of the given row ID.
+   */
+  setOwned(source, id) {
+    if (!this.owned.has(source)) {
+      this.owned.set(source, new Set())
+    }
+    const owned = this.owned.get(source)
+    owned.add(id)
+  }
+
+  /**
+   * Remove rows owned by the source.
+   */
+  removeOwned(source) {
+    const owned = this.owned.get(source)
+    if (owned) owned.forEach(id => this.remove(id))
   }
 
   /**
    * Apply a change to a row.
    */
-  apply(id, row, when, source) {
+  apply(id, row, when, emit, source) {
     const existing = this.rows.get(id)
     if (row) {
       if (existing) {
         Object.assign(existing, row)
-        this.updated.emit('update', id, existing, when, source)
+        this.updated.emit(id, existing, when, emit, source)
       } else {
         this.rows.set(id, row)
-        this.updated.emit('add', id, row, when, source)
+        this.setOwned(source, id)
+        this.added.emit(id, row, when, emit, source)
       }
     } else if (existing) {
       this.rows.delete(id)
-      this.updated.emit('remove', id, row, when, source)
+      this.removed.emit(id, row, when, emit, source)
     }
   }
 
@@ -93,20 +124,23 @@ class Table {
    */
   add(row) {
     const id = randHex(16)
-    row.mod = elapsed()
+    const when = elapsed()
+    row.mod = when
     this.rows.set(id, row)
-    this.updated.emit('add', id, row)
+    this.added.emit(id, row, when)
+    return id
   }
 
   /**
    * Update an existing row in the table.
    */
-  update(id, handler) {
+  update(id, handler, emit) {
     const row = this.rows.get(id)
     const diff = {}
-    diff.mod = elapsed()
+    const when = elapsed()
+    diff.mod = when
     handler(diffProxy(row, diff))
-    this.updated.emit('update', id, diff)
+    this.updated.emit(id, diff, when, emit)
   }
 
   /**
@@ -114,7 +148,7 @@ class Table {
    */
   remove(id) {
     if (this.rows.delete(id)) {
-      this.updated.emit('remove', id, null)
+      this.removed.emit(id, null, elapsed())
     }
   }
 }
@@ -127,14 +161,9 @@ class Table {
 function diffProxy(row, diff) {
   return new Proxy(row, {
     set: (obj, prop, value) => {
-      const orig = row[prop]
-      if (typeof orig === 'undefined') {
-        return false // Error if writing a new property
-      } else {
-        // Write assignments to the target object and the diff
-        diff[prop] = obj[prop] = value
-        return true
-      }
+      // Write assignments to the target object and the diff
+      diff[prop] = obj[prop] = value
+      return true
     },
   })
 }

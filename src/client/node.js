@@ -13,6 +13,7 @@ export class Node {
     this.rotation = rotation
     this.scale = scale
     this.remove = new Event()
+    this.broker = new Event()
     this.sync = new Event()
   }
 
@@ -107,17 +108,6 @@ export class Node {
   scaleTo(newScale) {
     this.scale = newScale
     this.node.pin('scale', newScale)
-  }
-
-  /**
-   * Add a new node from state.
-   */
-  static add(stage, data, when) {
-    let node = new this(data)
-    let age = when - data.mod
-    node.start(stage)
-    node.tick(age, stage)
-    return node
   }
 
   /**

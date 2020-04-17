@@ -18,7 +18,7 @@ export class Rock extends Moving {
     this.leave.on(side => this.onLeave(side))
     this.shoot
       .on(bullet => this.ricochet(bullet, constants.rockRicochet, 0))
-      .trigger(this.sync)
+      .trigger(this.sync, null)
   }
 
   onLeave(side) {
