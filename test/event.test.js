@@ -65,22 +65,17 @@ describe('Event', () => {
     expect(func.mock.calls).toEqual([['data1'], ['data2']])
   })
 
-  test('topic callbacks only trigger expected events', () => {
+  test('topic events only emit on match', () => {
     const start = new Event()
-    const ev1 = new Event()
-    const ev2 = new Event()
-    const func = jest.fn()
+    const func1 = jest.fn()
+    const func2 = jest.fn()
 
-    start.topic('topic1', ev1, 'data1')
-    start.topic('topic2', ev2, 'data2')
-    ev1.on(func)
-    ev2.on(func)
-    start.emit('topic1', 'data3')
-    start.emit('topic2', 'data4')
+    start.topic('topic1').on(func1)
+    start.topic('topic2').on(func2)
+    start.emit('topic1', 'data1')
+    start.emit('topic2', 'data2')
 
-    expect(func.mock.calls).toEqual([
-      ['data1', 'data3'],
-      ['data2', 'data4'],
-    ])
+    expect(func1.mock.calls).toEqual([['data1']])
+    expect(func2.mock.calls).toEqual([['data2']])
   })
 })

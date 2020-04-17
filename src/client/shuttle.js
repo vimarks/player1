@@ -28,7 +28,7 @@ export class Shuttle extends Moving {
 
     // Input will trigger actions and cause a sync
     this.input.trigger(this.actions).trigger(this.sync, 'input')
-    this.broker.topic('input', this.actions)
+    this.broker.topic('input').trigger(this.actions)
 
     // Fire a bullet on the 'fire' action
     this.actions.fire.on(() => this.handleFire())

@@ -50,14 +50,15 @@ export class Event {
   }
 
   /**
-   * Trigger another event when the event occurs, but only if it matches the
-   * topic. The topic is the first emitted argument, which is not emitted to the
-   * second event.
+   * Return a new event that will emit conditionally based on the first
+   * argument of this event, with the remaining arguments.
    */
-  topic(name, otherEvent, ...preArgs) {
+  topic(name) {
+    const topicEvent = new Event()
     this.on((topic, ...args) => {
-      if (topic === name) otherEvent.emit(...preArgs, ...args)
+      if (topic === name) topicEvent.emit(...args)
     })
+    return topicEvent
   }
 
   /**
