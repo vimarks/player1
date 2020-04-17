@@ -1,4 +1,4 @@
-import { Event } from '../src/event.js'
+import { Event, FilteredEvent } from '../src/event.js'
 
 describe('Event', () => {
   test('run a full chain of callbacks', () => {
@@ -63,5 +63,24 @@ describe('Event', () => {
     ev1.emit('data3')
 
     expect(func.mock.calls).toEqual([['data1'], ['data2']])
+  })
+
+  test('topic callbacks only trigger expected events', () => {
+    const start = new Event()
+    const ev1 = new Event()
+    const ev2 = new Event()
+    const func = jest.fn()
+
+    start.topic('topic1', ev1, 'data1')
+    start.topic('topic2', ev2, 'data2')
+    ev1.on(func)
+    ev2.on(func)
+    start.emit('topic1', 'data3')
+    start.emit('topic2', 'data4')
+
+    expect(func.mock.calls).toEqual([
+      ['data1', 'data3'],
+      ['data2', 'data4'],
+    ])
   })
 })

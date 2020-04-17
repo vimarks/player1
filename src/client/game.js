@@ -38,7 +38,7 @@ export class Game extends Node {
 
     // Initialize the shuttle
     let shuttle = state.shuttleSet.add()
-    input.triggerUntil(shuttle.remove, shuttle.actions)
+    input.triggerUntil(shuttle.remove, shuttle.input)
 
     // Initialize the events
     gameOver

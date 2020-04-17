@@ -29,7 +29,7 @@ export class Event {
    * event occurs.
    */
   until(untilEvent, callback) {
-    untilEvent.once(() => this.callbacks.delete(callback))
+    if (untilEvent) untilEvent.once(() => this.callbacks.delete(callback))
     return this.on(callback)
   }
 
@@ -37,7 +37,7 @@ export class Event {
    * Trigger another event when the event occurs.
    */
   trigger(otherEvent, ...preArgs) {
-    return this.on((...args) => otherEvent.emit(...preArgs, ...args))
+    return this.triggerUntil(null, otherEvent, ...preArgs)
   }
 
   /**
@@ -46,8 +46,18 @@ export class Event {
    */
   triggerUntil(untilEvent, otherEvent, ...preArgs) {
     const callback = (...args) => otherEvent.emit(...preArgs, ...args)
-    untilEvent.once(() => this.callbacks.delete(callback))
-    return this.on(callback)
+    return this.until(untilEvent, callback)
+  }
+
+  /**
+   * Trigger another event when the event occurs, but only if it matches the
+   * topic. The topic is the first emitted argument, which is not emitted to the
+   * second event.
+   */
+  topic(name, otherEvent, ...preArgs) {
+    this.on((topic, ...args) => {
+      if (topic === name) otherEvent.emit(...preArgs, ...args)
+    })
   }
 
   /**

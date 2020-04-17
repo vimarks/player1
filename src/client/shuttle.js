@@ -12,6 +12,7 @@ export class Shuttle extends Moving {
     // Initialize with the 'shuttle' image at the center of the screen
     super(Stage.image('shuttle'))
     this.fire = new Event()
+    this.input = new Event()
     this.actions = new Actions([
       'fire',
       'focus',
@@ -24,7 +25,10 @@ export class Shuttle extends Moving {
   start(stage) {
     super.start(stage)
     this.leave.on(side => this.onLeave(side))
-    this.actions.trigger(this.sync)
+
+    // Input will trigger actions and cause a sync
+    this.input.trigger(this.actions).trigger(this.sync, 'input')
+    this.broker.topic('input', this.actions)
 
     // Fire a bullet on the 'fire' action
     this.actions.fire.on(() => this.handleFire())

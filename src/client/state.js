@@ -55,32 +55,37 @@ class NodeSet {
    * Add a new row to the node set.
    */
   add(row = {}) {
-    const id = this.table.add(row, true)
+    const id = this.table.add(row)
     return this.map.get(id)
   }
 
   start(stage) {
-    // Handle all table events
-    this.table.updated.on((op, id, row, when, source) => {
-      if (!source) {
-        // Ignore local updates
-      } else if (op === 'add') {
-        // Add a new node from the table to the set
-        const newNode = this.newNode(stage, row, when)
-        this.map.set(id, newNode)
-        newNode.remove.on(() => this.table.remove(id))
-        newNode.sync.until(newNode.remove, () => {
-          this.table.update(id, row => newNode.save(stage, row))
-        })
-      } else if (op === 'update') {
+    this.table.added.on((id, row, when) => {
+      // Add a new node from the table to the set
+      const node = this.newNode(stage, row, when)
+      node.remove.on(() => this.table.remove(id))
+      node.sync.until(node.remove, (topic, ...args) => {
+        const emit = topic ? { topic, args } : undefined
+        this.table.update(id, row => node.save(stage, row), emit)
+      })
+      this.map.set(id, node)
+    })
+
+    this.table.updated.on((id, row, when, emit, source) => {
+      if (source) {
         // Load updates from the table into the node
         const node = this.map.get(id)
         node.load(stage, row, when)
-      } else if (op === 'remove') {
+        if (emit) node.broker.emit(emit.topic, ...emit.args)
+      }
+    })
+
+    this.table.removed.on((id, row, when, emit, source) => {
+      if (source) {
         // Remove the node from the set
         const node = this.map.get(id)
-        node.remove.emit()
         this.map.delete(id)
+        node.remove.emit()
       }
     })
   }

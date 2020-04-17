@@ -31,9 +31,9 @@ export class StateDoc {
   sync(conn) {
     // Send document changes on the socket until it closes
     this.forEach((type, table) => {
-      table.updated.until(conn.close, (op, id, row, when, source) => {
+      table.sync.until(conn.close, (id, row, when, emit, source) => {
         if (conn !== source) {
-          const changes = [{ type, id, row }]
+          const changes = [{ type, id, row, emit }]
           conn.send.emit({ when, changes })
         }
       })
@@ -43,8 +43,8 @@ export class StateDoc {
     conn.recv.on(msg => {
       const when = msg.when
       if (msg.changes.length > 0) {
-        msg.changes.forEach(({ type, id, row }) => {
-          this[type].apply(id, row, when, conn)
+        msg.changes.forEach(({ type, id, row, emit }) => {
+          this[type].apply(id, row, when, emit, conn)
         })
       }
     })
@@ -74,7 +74,10 @@ class Table {
     this.type = type
     this.owned = new WeakMap()
     this.rows = new Map()
-    this.updated = new Event()
+    this.sync = new Event()
+    this.added = new Event().trigger(this.sync)
+    this.updated = new Event().trigger(this.sync)
+    this.removed = new Event().trigger(this.sync)
   }
 
   /**
@@ -99,53 +102,53 @@ class Table {
   /**
    * Apply a change to a row.
    */
-  apply(id, row, when, source) {
+  apply(id, row, when, emit, source) {
     const existing = this.rows.get(id)
     if (row) {
       if (existing) {
         Object.assign(existing, row)
-        this.updated.emit('update', id, existing, when, source)
+        this.updated.emit(id, existing, when, emit, source)
       } else {
         this.rows.set(id, row)
         this.setOwned(source, id)
-        this.updated.emit('add', id, row, when, source)
+        this.added.emit(id, row, when, emit, source)
       }
     } else if (existing) {
       this.rows.delete(id)
-      this.updated.emit('remove', id, row, when, source)
+      this.removed.emit(id, row, when, emit, source)
     }
   }
 
   /**
    * Add a row to the table.
    */
-  add(row, source = null) {
+  add(row) {
     const id = randHex(16)
     const when = elapsed()
     row.mod = when
     this.rows.set(id, row)
-    this.updated.emit('add', id, row, when, source)
+    this.added.emit(id, row, when)
     return id
   }
 
   /**
    * Update an existing row in the table.
    */
-  update(id, handler, source = null) {
+  update(id, handler, emit) {
     const row = this.rows.get(id)
     const diff = {}
     const when = elapsed()
     diff.mod = when
     handler(diffProxy(row, diff))
-    this.updated.emit('update', id, diff, when, source)
+    this.updated.emit(id, diff, when, emit)
   }
 
   /**
    * Remove an existing row in the table.
    */
-  remove(id, source = null) {
+  remove(id) {
     if (this.rows.delete(id)) {
-      this.updated.emit('remove', id, null, elapsed(), source)
+      this.removed.emit(id, null, elapsed())
     }
   }
 }
