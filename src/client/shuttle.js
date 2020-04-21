@@ -69,10 +69,6 @@ export class Shuttle extends Moving {
     }
   }
 
-  fire() {
-    this.cannon.fire.emit(this)
-  }
-
   explode(stage) {
     let explosion = new Explode(this.offsetX, this.offsetY)
     explosion.start(stage)
