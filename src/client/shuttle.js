@@ -31,7 +31,7 @@ export class Shuttle extends Moving {
     this.actions.start(stage)
 
     // Fire a bullet on the 'fire' action
-    this.actions.on('fire', () => this.fire())
+    this.actions.on('fire', () => this.cannon.fire.emit(this))
     this.cannon.start(stage)
 
     // Spin the shuttle on the 'turnLeft' and 'turnRight' actions
@@ -63,10 +63,6 @@ export class Shuttle extends Moving {
         dt
       )
     }
-  }
-
-  fire() {
-    this.cannon.fire.emit(this)
   }
 
   explode(stage) {
