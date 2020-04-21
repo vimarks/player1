@@ -22,18 +22,20 @@ export class Cannon {
 
   shoot(stage, shooter) {
     let type = null
-    if (ammoType === 'bullet') {
-      type = { ammo: Bullet, sound: sounds.shootBullet }
+    switch (ammoType) {
+      case 'bullet':
+        type = { ammo: Bullet, sound: sounds.shootBullet }
+        break
+      case 'laser':
+        type = { ammo: Laser, sound: sounds.shootLaser }
+        break
+      case 'rapidFire':
+        type = { ammo: RapidFire, sound: null }
+        break
+      case 'doubleBarrel':
+        type = { ammo: DoubleBarrel, sound: null }
     }
-    if (ammoType === 'laser') {
-      type = { ammo: Laser, sound: sounds.shootLaser }
-    }
-    if (ammoType === 'rapidFire') {
-      type = { ammo: RapidFire, sound: null }
-    }
-    if (ammoType === 'doubleBarrel') {
-      type = { ammo: DoubleBarrel, sound: null }
-    }
+
     let projectile = new type.ammo(
       shooter.offsetX,
       shooter.offsetY,
