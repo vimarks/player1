@@ -95,9 +95,7 @@ export class Shuttle extends Moving {
       focusPoint.y
     )
   }
-  // fireCannon(stage,when){
-  //   cannon
-  // }
+
   fireBullet(stage, when) {
     // Create the bullet relative to the shuttle location and rotation
     let bullet = new Bullet(
