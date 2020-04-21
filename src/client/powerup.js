@@ -1,7 +1,7 @@
 import sounds from './sounds.js'
-import { Moving } from './moving.js'
+import { Node } from './node.js'
 
-export class Powerup extends Moving {
+export class Powerup extends Node {
   constructor({ offsetX, offsetY, type }) {
     let node = Stage.anim('powerup')
     super(node, offsetX, offsetY)
