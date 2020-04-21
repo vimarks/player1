@@ -1,7 +1,9 @@
 import constants from '../constants.js'
+import { Event } from '../event.js'
 import * as Trig from '../trig.js'
 import sounds from './sounds.js'
 import { Actions } from './actions.js'
+import { Cannon } from './cannon.js'
 import { Bullet } from './bullet.js'
 import { Moving } from './moving.js'
 import { Node } from './node.js'
@@ -10,8 +12,8 @@ export class Shuttle extends Moving {
   constructor(source) {
     // Initialize with the 'shuttle' image at the center of the screen
     super(Stage.image('shuttle'))
+    this.cannon = new Cannon(this)
     this.bulletSet = new Set()
-    this.reloading = false
     this.actions = new Actions(this.node, source, [
       'fire',
       'focus',
@@ -29,7 +31,8 @@ export class Shuttle extends Moving {
     this.actions.start(stage)
 
     // Fire a bullet on the 'fire' action
-    this.actions.on('fire', when => this.fireBullet(stage, when))
+    this.actions.on('fire', () => this.fire())
+    this.cannon.start(stage)
 
     // Spin the shuttle on the 'turnLeft' and 'turnRight' actions
     this.actions.on('turnLeft', () => this.turnLeft())
@@ -62,6 +65,10 @@ export class Shuttle extends Moving {
     }
   }
 
+  fire() {
+    this.cannon.fire.emit(this)
+  }
+
   explode(stage) {
     let explosion = new Explode(this.offsetX, this.offsetY)
     explosion.start(stage)
@@ -88,7 +95,9 @@ export class Shuttle extends Moving {
       focusPoint.y
     )
   }
-
+  // fireCannon(stage,when){
+  //   cannon
+  // }
   fireBullet(stage, when) {
     // Create the bullet relative to the shuttle location and rotation
     let bullet = new Bullet(

@@ -16,6 +16,7 @@ export class State {
     this.rockSet = new NodeSet(this.doc.rocks, Rock)
     this.crystalSet = new NodeSet(this.doc.crystals, Crystal)
     this.powerupSet = new NodeSet(this.doc.powerups, Powerup)
+    console.log(this.powerupSet.table.rows)
   }
 
   start(stage) {

@@ -9,7 +9,7 @@ export class PowerupMaker {
   }
 
   start(stage) {
-    setInterval(() => this.maybeMakePowerups(stage), 3000)
+    setInterval(() => this.maybeMakePowerups(stage), 7000)
   }
 
   maybeMakePowerups(stage) {
@@ -19,11 +19,17 @@ export class PowerupMaker {
     }
   }
 
+  typeSelector() {
+    let types = ['laser', 'bullet']
+    let randIndex = Math.floor(randRange(0, types.length))
+    return types[randIndex]
+  }
+  // randomly select the type of powerup and return it in the object.
   makePowerup(stage) {
     let offsetX = randRange(-stage.width() / 2, stage.width() / 2)
     let offsetY = randRange(-stage.height() / 2, stage.height() / 2)
-
     let when = elapsed()
-    return { when, offsetX, offsetY }
+    let type = this.typeSelector()
+    return { when, offsetX, offsetY, type }
   }
 }

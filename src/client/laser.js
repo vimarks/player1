@@ -3,22 +3,21 @@ import constants from '../constants.js'
 import * as Trig from '../trig.js'
 import { Projectile } from './projectile.js'
 
-export class Bullet extends Projectile {
+export class Laser extends Projectile {
   constructor(offsetX, offsetY, rotation, velocityX, velocityY) {
     let newVelocityX =
-      velocityX + Trig.calculateHorizontal(rotation, constants.bulletVelocity)
+      velocityX +
+      Trig.calculateHorizontal(rotation, constants.bulletVelocity * 3)
     let newVelocityY =
-      velocityY + Trig.calculateVertical(rotation, constants.bulletVelocity)
+      velocityY + Trig.calculateVertical(rotation, constants.bulletVelocity * 3)
 
-    // Initialize with the 'bullet' image with the location and rotation of the
-    // shuttle but with the new velocity
-    let node = Stage.image('bullet')
+    let node = Stage.image('laser')
     super(node, offsetX, offsetY, rotation, newVelocityX, newVelocityY)
+    this.expires = performance.now() + constants.laserDecay
   }
 
   start(stage) {
     super.start(stage)
-    this.expires = performance.now() + constants.bulletDecay
   }
 
   tick(dt, stage) {

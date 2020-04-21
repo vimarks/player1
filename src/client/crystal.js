@@ -1,4 +1,3 @@
-import { Event } from '../event.js'
 import sounds from './sounds.js'
 import { Moving } from './moving.js'
 
