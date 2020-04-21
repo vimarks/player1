@@ -1,5 +1,6 @@
 import shuttleImage from '../static/shuttle.png'
 import bulletImage from '../static/laser-blue.png'
+import laserImage from '../static/laser-red.png'
 import asteroidImage from '../static/asteroid-brown.png'
 import explosionSheet from '../static/explosionSpriteSheet.png'
 import crystalSheet from '../static/crystalSpriteSheet.png'
@@ -24,6 +25,12 @@ export default [
     image: bulletImage,
     textures: {
       bullet: { x: 0, y: 0, width: 15, height: 30 },
+    },
+  },
+  {
+    image: laserImage,
+    textures: {
+      laser: { x: 0, y: 0, width: 21, height: 32 },
     },
   },
 
@@ -67,20 +74,12 @@ export default [
   },
 ]
 
-function buildTexture(rows, cols, w, h) {
+function buildTexture(rows, cols, width, height) {
   let texture = []
-  let x = 0
-  let y = 0
-  for (let i = 0; i < rows; i++) {
-    x = 0
-    texture.push({ x, y, width: w, height: h })
-    x += w
-
-    for (let n = 1; n < cols; n++) {
-      texture.push({ x, y, width: w, heigth: h })
-      x += w
+  for (let y = 0; y < rows * height; y += height) {
+    for (let x = 0; x < cols * width; x += width) {
+      texture.push({ x, y, width, height })
     }
-    y += h
   }
   return texture
 }

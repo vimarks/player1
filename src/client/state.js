@@ -20,6 +20,7 @@ export class State {
     this.bulletSet = new NodeSet(this.doc.bullets, Bullet)
     this.shuttleSet = new NodeSet(this.doc.shuttles, Shuttle)
     this.powerupSet = new NodeSet(this.doc.powerups, Powerup)
+    console.log(this.powerupSet.table.rows)
   }
 
   start(stage) {

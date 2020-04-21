@@ -1,16 +1,11 @@
-import { Event } from '../event.js'
-
 import sounds from './sounds.js'
 import { Moving } from './moving.js'
 
 export class Powerup extends Moving {
-  constructor({ offsetX, offsetY }) {
+  constructor({ offsetX, offsetY, type }) {
     let node = Stage.anim('powerup')
     super(node, offsetX, offsetY)
-  }
-
-  static add(stage, data, when) {
-    return super.add(stage, data, when)
+    this.type = type
   }
 
   start(stage) {

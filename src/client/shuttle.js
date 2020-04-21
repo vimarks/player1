@@ -1,8 +1,10 @@
 import constants from '../constants.js'
+import { Event } from '../event.js'
 import * as Trig from '../trig.js'
 import { Event } from '../event.js'
 import sounds from './sounds.js'
 import { Actions } from './actions.js'
+import { Cannon } from './cannon.js'
 import { Bullet } from './bullet.js'
 import { Moving } from './moving.js'
 import { Node } from './node.js'
@@ -13,6 +15,7 @@ export class Shuttle extends Moving {
     super(Stage.image('shuttle'))
     this.fire = new Event()
     this.input = new Event()
+    this.cannon = new Cannon(this)
     this.actions = new Actions([
       'fire',
       'focus',
@@ -32,6 +35,8 @@ export class Shuttle extends Moving {
 
     // Fire a bullet on the 'fire' action
     this.actions.fire.on(() => this.handleFire())
+
+    this.cannon.start(stage)
 
     // Spin the shuttle on the 'turnLeft' and 'turnRight' actions
     this.actions.turnLeft.on(() => this.turnLeft())
@@ -62,6 +67,10 @@ export class Shuttle extends Moving {
         dt
       )
     }
+  }
+
+  fire() {
+    this.cannon.fire.emit(this)
   }
 
   explode(stage) {
