@@ -9,7 +9,7 @@ export class PowerupMaker {
   }
 
   start(stage) {
-    setInterval(() => this.maybeMakePowerups(stage), 7000)
+    setInterval(() => this.maybeMakePowerups(stage), 5000)
   }
 
   maybeMakePowerups(stage) {
