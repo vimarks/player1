@@ -1,10 +1,11 @@
 import { Event } from '../event.js'
 import constants from '../constants.js'
 import * as Trig from '../trig.js'
+import sounds from './sounds.js'
 import { Projectile } from './projectile.js'
 
 export class Laser extends Projectile {
-  constructor(offsetX, offsetY, rotation, velocityX, velocityY) {
+  constructor({ offsetX, offsetY, rotation, velocityX, velocityY }) {
     let newVelocityX =
       velocityX +
       Trig.calculateHorizontal(rotation, constants.bulletVelocity * 3)
@@ -18,9 +19,6 @@ export class Laser extends Projectile {
 
   start(stage) {
     super.start(stage)
-  }
-
-  tick(dt, stage) {
-    super.tick(dt, stage)
+    sounds.shootLaser.emit()
   }
 }

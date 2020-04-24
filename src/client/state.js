@@ -4,7 +4,7 @@ import { Message, Connection } from '../conn.js'
 import id from './id.js'
 import { Rock } from './rock.js'
 import { Crystal } from './crystal.js'
-import { Bullet } from './bullet.js'
+import { newProjectile } from './cannon.js'
 import { Shuttle } from './shuttle.js'
 import { Powerup } from './powerup.js'
 
@@ -15,11 +15,13 @@ export class State {
   constructor(url) {
     this.url = url
     this.doc = new StateDoc()
-    this.rockSet = new NodeSet(this.doc.rocks, Rock)
-    this.crystalSet = new NodeSet(this.doc.crystals, Crystal)
-    this.bulletSet = new NodeSet(this.doc.bullets, Bullet)
-    this.shuttleSet = new NodeSet(this.doc.shuttles, Shuttle)
-    this.powerupSet = new NodeSet(this.doc.powerups, Powerup)
+    this.rockSet = new NodeSet(this.doc.rocks, row => new Rock(row))
+    this.crystalSet = new NodeSet(this.doc.crystals, row => new Crystal(row))
+    this.shuttleSet = new NodeSet(this.doc.shuttles, row => new Shuttle(row))
+    this.powerupSet = new NodeSet(this.doc.powerups, row => new Powerup(row))
+    this.projectileSet = new NodeSet(this.doc.projectiles, row =>
+      newProjectile(row)
+    )
   }
 
   start(stage) {
@@ -34,9 +36,9 @@ export class State {
     // Handle shared state updates
     this.rockSet.start(stage)
     this.crystalSet.start(stage)
-    this.bulletSet.start(stage)
     this.shuttleSet.start(stage)
     this.powerupSet.start(stage)
+    this.projectileSet.start(stage)
   }
 }
 
@@ -44,9 +46,9 @@ export class State {
  * Manages a set of nodes that are synced with a table on the server.
  */
 class NodeSet {
-  constructor(table, nodeClass) {
+  constructor(table, newNode) {
     this.table = table
-    this.nodeClass = nodeClass
+    this.newNode = newNode
     this.map = new Map()
   }
 
@@ -65,7 +67,7 @@ class NodeSet {
   start(stage) {
     this.table.added.on((id, row, when) => {
       // Add a new node from the table to the set
-      const node = this.newNode(stage, row, when)
+      const node = this.startNode(stage, row, when)
       node.remove.on(() => this.table.remove(id))
       node.sync.until(node.remove, (topic, ...args) => {
         const emit = topic ? { topic, args } : undefined
@@ -96,8 +98,8 @@ class NodeSet {
   /**
    * Create and start the node from the row.
    */
-  newNode(stage, row, when) {
-    const node = new this.nodeClass(row)
+  startNode(stage, row, when) {
+    const node = this.newNode(row)
     const age = when - row.mod
     node.start(stage)
     node.tick(age, stage)

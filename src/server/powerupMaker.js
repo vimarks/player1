@@ -20,7 +20,7 @@ export class PowerupMaker {
   }
 
   typeSelector() {
-    let types = ['laser', 'bullet']
+    let types = ['lasers', 'bullets']
     let randIndex = Math.floor(randRange(0, types.length))
     return types[randIndex]
   }

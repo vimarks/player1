@@ -1,4 +1,3 @@
-import { Event } from '../event.js'
 import constants from '../constants.js'
 import * as Trig from '../trig.js'
 import sounds from './sounds.js'
@@ -18,15 +17,11 @@ export class Bullet extends Projectile {
     // shuttle but with the new velocity
     let node = Stage.image('bullet')
     super(node, offsetX, offsetY, rotation, newVelocityX, newVelocityY)
+    this.expires = performance.now() + constants.bulletDecay
   }
 
   start(stage) {
     super.start(stage)
-    sounds.shootLaser.emit()
-    this.expires = performance.now() + constants.bulletDecay
-  }
-
-  tick(dt, stage) {
-    super.tick(dt, stage)
+    sounds.shootBullet.emit()
   }
 }

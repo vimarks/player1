@@ -1,53 +1,48 @@
 import { Event } from '../event.js'
 import sounds from './sounds.js'
-import { Laser } from './laser.js'
+import { Text } from './text.js'
 import { Bullet } from './bullet.js'
+import { Laser } from './laser.js'
 
-let ammoType = 'bullet'
-export class Cannon {
-  constructor() {
-    this.projectileSet = new Set()
+const defaultType = 'bullets'
+
+export function newProjectile({ type, ...row }) {
+  if (type === 'bullets') {
+    return new Bullet(row)
+  } else if (type === 'lasers') {
+    return new Laser(row)
+  } else {
+    throw new KeyError(type)
+  }
+}
+
+export class Cannon extends Text {
+  constructor(shooter) {
+    super({ alignX: 0.1, alignY: 0.92 })
+    this.shooter = shooter
+    this.value = defaultType
     this.arm = new Event()
     this.fire = new Event()
   }
 
   start(stage) {
+    super.start(stage)
     this.arm.on(powerup => this.changeAmmo(powerup))
-    this.fire.on(shooter => this.shoot(stage, shooter))
   }
 
   changeAmmo({ type }) {
-    ammoType = type
+    this.value = type
   }
 
-  shoot(stage, shooter) {
-    let type = null
-    switch (ammoType) {
-      case 'bullet':
-        type = { ammo: Bullet, sound: sounds.shootBullet }
-        break
-      case 'laser':
-        type = { ammo: Laser, sound: sounds.shootLaser }
-        break
-      case 'rapidFire':
-        type = { ammo: RapidFire, sound: null }
-        break
-      case 'doubleBarrel':
-        type = { ammo: DoubleBarrel, sound: null }
-    }
-
-    let projectile = new type.ammo(
-      shooter.offsetX,
-      shooter.offsetY,
-      shooter.rotation,
-      shooter.velocityX,
-      shooter.velocityY
-    )
-
-    this.projectileSet.add(projectile)
-    projectile.remove.on(() => this.projectileSet.delete(projectile))
-
-    shooter.visible && projectile.start(stage)
-    type.sound.emit()
+  shoot(stage) {
+    const shooter = this.shooter
+    this.fire.emit({
+      type: this.value,
+      offsetX: shooter.offsetX,
+      offsetY: shooter.offsetY,
+      rotation: shooter.rotation,
+      velocityX: shooter.velocityX,
+      velocityY: shooter.velocityY,
+    })
   }
 }

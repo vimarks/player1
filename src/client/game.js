@@ -54,7 +54,7 @@ export class Game extends Node {
       .trigger(gameOver)
 
     collisions
-      .detect(state.rockSet, state.bulletSet)
+      .detect(state.rockSet, state.projectileSet)
       .triggerLeft(rock => rock.shoot)
       .triggerRight(projectile => projectile.remove)
 
@@ -65,7 +65,8 @@ export class Game extends Node {
       .trigger(sounds.crystalCapture)
       .triggerRight(crystal => crystal.remove)
 
-    shuttle.fire.on(row => state.bulletSet.add(row))
+    shuttle.cannon.fire.on(row => state.projectileSet.add(row))
+
     collisions
       // returns a new group(leftSet, rightSet)
       // when an object from either set touches, an event is emited
