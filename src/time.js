@@ -1,15 +1,15 @@
 // Get current time in ms in Node.JS
-function hrtimeNow() {
-  return Number(process.hrtime.bigint() / 1000000n)
+function nodejsNow() {
+  return Number(process.hrtime.bigint() / BigInt(1000000))
 }
 
 // Get current time in ms in browser
-function performanceNow() {
+function browserNow() {
   return performance.now()
 }
 
 // Detect with ...Now() function to use
-const now = typeof performance !== 'undefined' ? performanceNow : hrtimeNow
+const now = typeof performance !== 'undefined' ? browserNow : nodejsNow
 
 // The time when the module was loaded
 const startTime = now()
