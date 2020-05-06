@@ -19,11 +19,17 @@ export default {
   // How long a bullet lasts after being fired
   bulletDecay: 1300,
 
+  // How long a laser lasts after being fired
+  laserDecay: 400,
+
   // Probability that RockMaker creates new rocks.
   newRockChance: 0.4,
 
   // Probability that CrystalMaker creates new crystals.
   newCrystalChance: 0.4,
+
+  // Probability that PowerUpMaker creates new powerup.
+  newPowerupChance: 0.4,
 
   // Determines shape of normal distribution from which rock velocity is chosen.
   rockVelocityDist: { mu: 75, sigma: 20 },

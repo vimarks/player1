@@ -17,7 +17,7 @@ export class Rock extends Moving {
     super.start(stage)
     this.leave.on(side => this.onLeave(side))
     this.shoot
-      .on(bullet => this.ricochet(bullet, constants.rockRicochet, 0))
+      .on(projectile => this.ricochet(projectile, constants.rockRicochet, 0))
       .trigger(this.sync, null)
   }
 

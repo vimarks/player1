@@ -1,9 +1,9 @@
 import constants from '../constants.js'
-import * as Trig from '../trig.js'
 import { Event } from '../event.js'
+import * as Trig from '../trig.js'
 import sounds from './sounds.js'
 import { Actions } from './actions.js'
-import { Bullet } from './bullet.js'
+import { Cannon } from './cannon.js'
 import { Moving } from './moving.js'
 import { Node } from './node.js'
 
@@ -13,6 +13,7 @@ export class Shuttle extends Moving {
     super(Stage.image('shuttle'))
     this.fire = new Event()
     this.input = new Event()
+    this.cannon = new Cannon(this)
     this.actions = new Actions([
       'fire',
       'focus',
@@ -30,8 +31,10 @@ export class Shuttle extends Moving {
     this.input.trigger(this.actions).trigger(this.sync, 'input')
     this.broker.topic('input').trigger(this.actions)
 
-    // Fire a bullet on the 'fire' action
-    this.actions.fire.on(() => this.handleFire())
+    // Shoot the cannon on the 'fire' action
+    this.actions.fire.on(() => this.cannon.shoot(stage, this))
+
+    this.cannon.start(stage)
 
     // Spin the shuttle on the 'turnLeft' and 'turnRight' actions
     this.actions.turnLeft.on(() => this.turnLeft())
@@ -89,17 +92,6 @@ export class Shuttle extends Moving {
       focusPoint.x,
       focusPoint.y
     )
-  }
-
-  handleFire() {
-    // Emit a fire event with the shuttle location and rotation
-    this.fire.emit({
-      offsetX: this.offsetX,
-      offsetY: this.offsetY,
-      rotation: this.rotation,
-      velocityX: this.velocityX,
-      velocityY: this.velocityY,
-    })
   }
 
   save(stage, row) {
