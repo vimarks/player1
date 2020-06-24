@@ -1,5 +1,5 @@
 # player1
-[vimarks.github.io/player1](vimarks.github.io/player1)  
+[vimarks.github.io/player1](https://vimarks.github.io/player1)  
 ### About  
 player1 is an original game built by three friends wanting a creative outlet. Inspired by childhood games like Crystal Quest and Escape Velocity, player1 recalls their simple elegance to the multiplayer arena.
 
