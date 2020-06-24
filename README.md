@@ -22,9 +22,9 @@ Copy your unique player1 url ending in `?game=xxxx` and paste to those you wish 
 * Automated deployment to Heroku and GitHub Pages
 
 ### Authors  
-- abtrout // [GitHub](https://github.com/abtrout) // [LinkedIn](https://www.linkedin.com/in/vincentmarks001/)
+- abtrout // [GitHub](https://github.com/abtrout) // [LinkedIn](https://www.linkedin.com/in/abtrout/)
 - icgood // [GitHub](https://github.com/icgood) // [LinkedIn](https://www.linkedin.com/in/icgood/)
-- vimarks // [GitHub](https://github.com/vimarks) // [LinkedIn](https://www.linkedin.com/in/abtrout/)
+- vimarks // [GitHub](https://github.com/vimarks) // [LinkedIn](https://www.linkedin.com/in/vincentmarks001/)
 
 ---
 You are free to copy, modify, and distribute player1 with attribution under the terms of the MIT license.
