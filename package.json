@@ -4,24 +4,24 @@
   "description": "Spaceship Laboratory",
   "private": true,
   "dependencies": {
-    "ws": "^7.2.3"
+    "ws": "^7.3.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.9.0",
-    "@babel/node": "^7.8.7",
-    "@babel/preset-env": "^7.9.0",
-    "babel-jest": "^25.2.3",
+    "@babel/core": "^7.11.0",
+    "@babel/node": "^7.10.5",
+    "@babel/preset-env": "^7.11.0",
+    "babel-jest": "^25.5.1",
     "babel-loader": "^8.1.0",
     "clean-webpack-plugin": "^3.0.0",
     "file-loader": "^6.0.0",
-    "html-webpack-plugin": "^4.0.4",
-    "jest": "^25.2.3",
-    "nodemon": "^2.0.2",
-    "prettier": "^2.0.1",
+    "html-webpack-plugin": "^4.3.0",
+    "jest": "^25.5.4",
+    "nodemon": "^2.0.4",
+    "prettier": "^2.0.5",
     "stage-js": "^0.8.11",
-    "webpack": "^4.42.1",
-    "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.10.3",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0",
     "webpack-node-externals": "^1.7.2"
   },
   "scripts": {
