@@ -8,7 +8,6 @@ import { PowerupMaker } from './powerupmaker.js'
 
 // Mimicks the methods we need on the `stage` object
 const stage = {
-  first: () => stage,
   width: () => constants.viewbox.width,
   height: () => constants.viewbox.height,
 }
