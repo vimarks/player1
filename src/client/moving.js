@@ -28,14 +28,14 @@ export class Moving extends Node {
    * Gets the X-coordinate where the node disappears off the screen.
    */
   getRightEdge(stage) {
-    return stage.width() / 2 + this.radius * 2
+    return stage.width() / 2 + this.radius
   }
 
   /**
    * Gets the Y-coordinate where the node disappears off the screen.
    */
   getBottomEdge(stage) {
-    return stage.height() / 2 + this.radius * 2
+    return stage.height() / 2 + this.radius
   }
 
   /**

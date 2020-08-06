@@ -19,8 +19,11 @@ export default {
   // How long a bullet lasts after being fired
   bulletDecay: 1300,
 
-  // How long a laser lasts after being fired
+  // How long a laser lasts after being fired.
   laserDecay: 400,
+
+  // Number of stars in the background.
+  starfieldSize: 100,
 
   // Probability that RockMaker creates new rocks.
   newRockChance: 0.4,

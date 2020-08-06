@@ -19,7 +19,7 @@ export class Node {
 
   append(stage) {
     // Add the node to the parent node
-    stage.first().append(this.node)
+    stage.append(this.node)
   }
 
   start(stage) {

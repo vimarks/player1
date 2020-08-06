@@ -19,7 +19,6 @@ export class RockMaker {
   }
 
   makeRock(stage) {
-    let game = stage.first()
     let velocityX = randSign() * randNormal(constants.rockVelocityDist)
     let velocityY = randSign() * randNormal(constants.rockVelocityDist)
     let scale = randNormal(constants.rockSizeDist)
@@ -27,8 +26,8 @@ export class RockMaker {
     let side, offsetX, offsetY
     if (Math.random() < 0.5) {
       // Start the rock on the left or right side
-      offsetX = game.width() * 0.45
-      offsetY = randRange(-game.height() / 2, game.height() / 2)
+      offsetX = stage.width() * 0.45
+      offsetY = randRange(-stage.height() / 2, stage.height() / 2)
       if (velocityX > 0) {
         offsetX = -offsetX
         side = 'left'
@@ -37,8 +36,8 @@ export class RockMaker {
       }
     } else {
       // Start the rock on the top or bottom side
-      offsetX = randRange(-game.width() / 2, game.width() / 2)
-      offsetY = game.height() * 0.45
+      offsetX = randRange(-stage.width() / 2, stage.width() / 2)
+      offsetY = stage.height() * 0.45
       if (velocityY > 0) {
         offsetY = -offsetY
         side = 'top'

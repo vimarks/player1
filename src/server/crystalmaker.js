@@ -20,7 +20,6 @@ export class CrystalMaker {
   }
 
   makeCrystal(stage) {
-    let game = stage.first()
     let offsetX = randRange(-stage.width() / 2, stage.width() / 2)
     let offsetY = randRange(-stage.height() / 2, stage.height() / 2)
 
