@@ -38,8 +38,13 @@ export class Cannon extends Text {
     const shooter = this.shooter
     this.fire.emit({
       type: this.value,
-      offsetX: shooter.offsetX,
-      offsetY: shooter.offsetY,
+      offsetX:
+        shooter.offsetX +
+        // had to change the offsets so the projectile cleared the shuttle
+        (shooter.radius + 3.75) * Math.cos(shooter.rotation - 1.5708),
+      offsetY:
+        shooter.offsetY +
+        (shooter.radius + 3.75) * Math.sin(shooter.rotation - 1.5708),
       rotation: shooter.rotation,
       velocityX: shooter.velocityX,
       velocityY: shooter.velocityY,

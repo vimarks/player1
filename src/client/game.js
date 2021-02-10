@@ -42,6 +42,11 @@ export class Game {
     timer.expire.trigger(gameOver)
 
     collisions
+      .detect([shuttle], state.projectileSet)
+      .trigger(gameOver)
+      .triggerRight(projectile => projectile.remove)
+
+    collisions
       .detect([shuttle], state.rockSet)
       .trigger(sounds.explosion)
       .trigger(gameOver)
